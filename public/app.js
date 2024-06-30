@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
+        
     function updateGlobeAndInfo(selection) {
         let info;
         switch(currentCategory) {

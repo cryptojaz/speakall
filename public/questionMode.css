@@ -95,6 +95,20 @@
     margin: 0 auto;
 }
 
+
+#answerArea {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+}
+
+
+#selectionSummary {
+    margin-bottom: 20px;
+    font-size: 0.9em;
+    color: #888;
+}
+
 .home-link {
     display: inline-block;
     margin-top: 20px;
@@ -103,10 +117,4 @@
     color: white;
     text-decoration: none;
     border-radius: 5px;
-}
-
-#answerArea {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 20px;
 }

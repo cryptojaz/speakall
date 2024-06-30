@@ -3,12 +3,12 @@ import { languageInfo, funLanguageInfo, historicLanguageInfo, alienLanguageInfo 
 document.addEventListener('DOMContentLoaded', function() {
     const questions = [
         {
-            title: "Select a language category",
+            title: "Selected category",
             type: "category",
             options: ["Modern Languages", "Historic Languages", "Alien Languages", "Fun Languages"]
         },
         {
-            title: "Select a specific language",
+            title: "Selected language",
             type: "language",
             options: [] // This will be populated based on the selected category
         },
@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', function() {
         questionTitle.textContent = question.title;
         answerArea.innerHTML = '';
 
+        updateSelectionSummary();
+
         switch (question.type) {
             case 'category':
             case 'language':
@@ -55,6 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
         updateProgressBar();
         updateNavigationButtons();
+    }
+
+    function updateSelectionSummary() {
+        const summary = document.getElementById('selectionSummary');
+        summary.innerHTML = '';
+        for (let i = 0; i < currentQuestionIndex; i++) {
+            const div = document.createElement('div');
+            div.textContent = `${questions[i].title}: ${answers[questions[i].type]}`;
+            summary.appendChild(div);
+        }
     }
 
     function selectOption(option) {
@@ -107,10 +119,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateNavigationButtons() {
         prevButton.style.display = currentQuestionIndex === 0 ? 'none' : 'inline-block';
-        nextButton.textContent = currentQuestionIndex === questions.length - 1 ? 'Translate' : 'Next';
+        if (currentQuestionIndex === questions.length - 1) {
+            nextButton.style.display = 'none';
+            const translateButton = document.createElement('button');
+            translateButton.id = 'translateButton';
+            translateButton.textContent = 'Translate';
+            translateButton.addEventListener('click', showResult);
+            document.getElementById('navigationButtons').appendChild(translateButton);
+        } else {
+            nextButton.style.display = 'inline-block';
+            nextButton.textContent = 'Next';
+            const existingTranslateButton = document.getElementById('translateButton');
+            if (existingTranslateButton) {
+                existingTranslateButton.remove();
+            }
+        }
     }
 
     async function showResult() {
+        const translateButton = document.getElementById('translateButton');
+        translateButton.disabled = true;
+        translateButton.style.opacity = '0.5';
         const textToTranslate = document.getElementById('translationInput').value;
         answers.text = textToTranslate;
 

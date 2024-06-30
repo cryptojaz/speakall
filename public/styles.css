@@ -200,3 +200,33 @@ button:hover {
   font-size: 16px;
 }
 
+footer {
+  text-align: center;
+  padding: 20px;
+  background-color: #1a1a2e; /* Dark background to match the site */
+  color: #4ecca3; /* Neon green text to match the site's theme */
+}
+
+footer a {
+  color: #4ecca3;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrap {
+  flex: 1;
+}
