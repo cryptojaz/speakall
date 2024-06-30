@@ -1,23 +1,21 @@
 import Anthropic from "@anthropic-ai/sdk";
 
-let anthropic: Anthropic;
+let anthropic;
 
 function initializeAnthropicClient() {
-  const apiKey = process.env.CLAUDE_API_KEY;
-  console.log('Initializing Anthropic client with API key:', apiKey);
+  const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    throw new Error('CLAUDE_API_KEY is not set in environment variables');
+    console.error('ANTHROPIC_API_KEY is not set in environment variables');
+    throw new Error('ANTHROPIC_API_KEY is not set in environment variables');
   }
   anthropic = new Anthropic({ apiKey });
 }
 
-export async function translateText(text: string, targetLanguage: string): Promise<string> {
+export async function translateText(text, targetLanguage) {
   if (!anthropic) {
     initializeAnthropicClient();
   }
-
   try {
-    console.log('Sending request to Anthropic API...');
     const response = await anthropic.messages.create({
       model: "claude-3-opus-20240229",
       max_tokens: 1000,
@@ -30,17 +28,19 @@ export async function translateText(text: string, targetLanguage: string): Promi
         }
       ]
     });
-
-    console.log('Received response from Anthropic API:', response);
-
+    
     const translatedText = response.content
       .filter(block => block.type === 'text')
-      .map(block => (block as { text: string }).text)
+      .map(block => block.text)
       .join(' ');
-
+    
+    if (!translatedText.trim()) {
+      throw new Error("Received empty translation response.");
+    }
+    
     return translatedText;
   } catch (error) {
     console.error('Error calling Claude API:', error);
-    throw error;
+    throw new Error(`Translation API error: ${error.message}`);
   }
 }
