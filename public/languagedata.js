@@ -73,15 +73,8 @@
             coordinates: [0, 0],
             fact: 'Joke Language takes any phrase and humorously transforms it, employing puns, wordplay, or playful misinterpretation to add a comic twist.'
         },
-        'Wise Guy Language S.A.O.G.': {
-            coordinates: [0, 0],
-            fact: 'Wise Guy Language takes any phrase and humorously transforms it to reflect a humourous interpretation of a modern day wisegy.'
-        },
+        
     
-        'Dothraki': { 
-            coordinates: [-118.3232, 34.0928], // Coordinates of Hollywood, where Game of Thrones was produced
-            fact: 'Dothraki is a constructed language created by David J. Peterson for the Game of Thrones TV series, spoken by the nomadic Dothraki people.'
-        },
         'Lojban': { 
             coordinates: [0, 0], 
             fact: 'Lojban is a logical language created by the Logical Language Group in 1987, designed to be unambiguous in its syntax and grammar.'
@@ -157,11 +150,6 @@
             origin: 'Star Wars Universe',
             coordinates: [0, 0],
             fact: 'The language of Wookiees, characterized by growls and roars, suited to their vocal apparatus.'
-        },
-        'Heptapod Language': {
-            origin: 'Arrival Movie',
-            coordinates: [0, 0],
-            fact: 'A visual language with complex circular symbols, representing the Heptapods\' non-linear perception of time.'
         }
     };
     

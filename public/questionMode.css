@@ -49,13 +49,13 @@
 }
 
 .nav-button {
-    padding: 10px 20px;
+    padding: 10px 10px;
     border: none;
     background-color: #4CAF50;
     color: white;
     cursor: pointer;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 12px;
 }
 
 #navigationButtons {
@@ -86,28 +86,33 @@
     background-color: #1DA1F2;
 }
 
-#questionModeContainer {
+.app-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  #questionModeContainer {
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
+  }
 
 #answerArea {
-    max-height: 300px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-}
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 
 
 #selectionSummary {
-    margin-bottom: 20px;
-    font-size: 0.9em;
-    color: #888;
-}
+    width: 100%;
+    text-align: left;
+    padding-left: 10%;
+  }
 
 .home-link {
     display: inline-block;

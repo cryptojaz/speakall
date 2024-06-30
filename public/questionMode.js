@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const questionTitle = document.getElementById('questionTitle');
     const answerArea = document.getElementById('answerArea');
     const prevButton = document.getElementById('prevButton');
-    const nextButton = document.getElementById('nextButton');
+    
     const progressBar = document.getElementById('progressBar');
     const resultArea = document.getElementById('resultArea');
     const translationResult = document.getElementById('translationResult');
@@ -120,21 +120,18 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateNavigationButtons() {
         prevButton.style.display = currentQuestionIndex === 0 ? 'none' : 'inline-block';
         if (currentQuestionIndex === questions.length - 1) {
-            nextButton.style.display = 'none';
-            const translateButton = document.createElement('button');
-            translateButton.id = 'translateButton';
-            translateButton.textContent = 'Translate';
-            translateButton.addEventListener('click', showResult);
-            document.getElementById('navigationButtons').appendChild(translateButton);
+          const translateButton = document.createElement('button');
+          translateButton.id = 'translateButton';
+          translateButton.textContent = 'Translate';
+          translateButton.addEventListener('click', showResult);
+          document.getElementById('navigationButtons').appendChild(translateButton);
         } else {
-            nextButton.style.display = 'inline-block';
-            nextButton.textContent = 'Next';
-            const existingTranslateButton = document.getElementById('translateButton');
-            if (existingTranslateButton) {
-                existingTranslateButton.remove();
-            }
+          const existingTranslateButton = document.getElementById('translateButton');
+          if (existingTranslateButton) {
+            existingTranslateButton.remove();
+          }
         }
-    }
+      }
 
     async function showResult() {
         const translateButton = document.getElementById('translateButton');
@@ -142,6 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
         translateButton.style.opacity = '0.5';
         const textToTranslate = document.getElementById('translationInput').value;
         answers.text = textToTranslate;
+
 
         try {
             const response = await fetch('/api/translate', {
@@ -164,12 +162,20 @@ document.addEventListener('DOMContentLoaded', function() {
             resultArea.style.display = 'block';
             document.getElementById('questionContent').style.display = 'none';
             document.getElementById('navigationButtons').style.display = 'none';
+
+            const completedMessage = document.createElement('p');
+            completedMessage.textContent = 'Translation completed!';
+            completedMessage.style.color = '#4CAF50';
+            completedMessage.style.fontWeight = 'bold';
+            document.getElementById('selectionSummary').appendChild(completedMessage);
+            
         } catch (error) {
             console.error('Error during translation:', error);
             translationResult.textContent = 'An error occurred during translation.';
         }
     }
 
+  
     copyButton.addEventListener('click', () => {
         navigator.clipboard.writeText(translationResult.textContent)
             .then(() => alert('Copied to clipboard!'))
@@ -189,13 +195,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     
     prevButton.addEventListener('click', prevQuestion);
-    nextButton.addEventListener('click', () => {
-        if (currentQuestionIndex === questions.length - 1) {
-            showResult();
-        } else {
-            nextQuestion();
-        }
-    });
+   
 
     // Initialize the question mode
     updateQuestion();

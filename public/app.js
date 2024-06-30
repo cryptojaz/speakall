@@ -105,7 +105,10 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-        
+      
+
+
+
     function updateGlobeAndInfo(selection) {
         let info;
         switch(currentCategory) {
@@ -132,8 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update globe visualization
         if (currentCategory === 'alienLanguage') {
-            globeContainer.innerHTML = `<img src="images/${selection.toLowerCase()}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else {
+            globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`; } else {
             if (globeContainer.innerHTML.includes('img')) {
                 globeContainer.innerHTML = '';
                 globe(globeContainer);
@@ -147,6 +149,20 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
     }
 
+    function highlightCountry(countryName) {
+        const highlightMaterial = new THREE.MeshPhongMaterial({
+          color: 0xff0000,
+          transparent: true,
+          opacity: 0.6
+        });
+        
+        globe.polygonsData(countriesData.features)
+          .polygonAltitude(0.01)
+          .polygonCapColor(d => d.properties.name === countryName ? highlightMaterial : 'transparent')
+          .polygonSideColor(() => 'rgba(0, 100, 0, 0.15)')
+          .polygonStrokeColor(() => '#111');
+      }
+      
     currentCategory = shuffleMode();
     // Initial setup
     updateLanguageOptions(currentCategory);
