@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Using a series of dashes or an emoji as a divider
         const divider = " —— ";
         const customMessage = "SpeakAll - Speak in any language, I mean any language!";
-        const tweetContent = encodeURIComponent(customMessage + divider + outputText);
+        const tweetContent = encodeURIComponent(`${customMessage} ${divider} ${outputText} https://claude1.vercel.app/`);
         const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetContent}`;
         window.open(tweetUrl, '_blank');
       });

@@ -51,6 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
             case 'text':
                 const textarea = document.createElement('textarea');
                 textarea.id = 'translationInput';
+                textarea.className = 'full-width';
                 answerArea.appendChild(textarea);
                 break;
         }
@@ -124,6 +125,7 @@ document.addEventListener('DOMContentLoaded', function() {
           translateButton.id = 'translateButton';
           translateButton.textContent = 'Translate';
           translateButton.addEventListener('click', showResult);
+       
           document.getElementById('navigationButtons').appendChild(translateButton);
         } else {
           const existingTranslateButton = document.getElementById('translateButton');
@@ -136,8 +138,10 @@ document.addEventListener('DOMContentLoaded', function() {
     async function showResult() {
         const translateButton = document.getElementById('translateButton');
         translateButton.disabled = true;
-        translateButton.style.opacity = '0.5';
+        translateButton.style.opacity = '0.1';
         const textToTranslate = document.getElementById('translationInput').value;
+        const userInput = document.getElementById('translationInput').value;
+        document.getElementById('userInput').textContent = `Original submission: ${userInput}`;
         answers.text = textToTranslate;
 
 
@@ -183,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     tweetButton.addEventListener('click', () => {
+ 
         const tweetText = encodeURIComponent(`Check out this translation: ${translationResult.textContent}`);
         window.open(`https://twitter.com/intent/tweet?text=${tweetText}`, '_blank');
     });
@@ -192,7 +197,12 @@ document.addEventListener('DOMContentLoaded', function() {
     homeLink.textContent = 'Back to Home';
     homeLink.className = 'home-link';
     resultArea.appendChild(homeLink);
-
+ 
+    const refreshLink = document.createElement('a');
+refreshLink.href = 'questionMode.html'; // This will reload the question mode page
+refreshLink.textContent = 'Refresh';
+refreshLink.className = 'refresh-link';
+resultArea.appendChild(refreshLink);
     
     prevButton.addEventListener('click', prevQuestion);
    
