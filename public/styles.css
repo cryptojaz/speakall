@@ -201,7 +201,7 @@ button:hover {
 #questionModeTab button {
   border-radius: 0 5px 5px 0;
   padding: 7px;
-  writing-mode: vertical-lr;
+  writing-mode: vertical-rl;
   text-orientation: mixed;
 }
 
