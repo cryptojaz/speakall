@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakAll - Question Mode</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="questionMode.css">
+    <link rel="icon" type="image/x-icon" href="sa.ico">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>SpeakAll</h1>
+            <p>Your Omnilingual Superpower - Question Mode</p>
+        </header>
+        <main>
+            <div id="questionModeContainer" class="translation-container">
+                <div id="progressBar"></div>
+                <div id="questionContent">
+                    <h2 id="questionTitle"></h2>
+                    <div id="answerArea"></div>
+                </div>
+                <div id="navigationButtons">
+                    <button id="prevButton" class="nav-button">Previous</button>
+                    <button id="nextButton" class="nav-button">Next</button>
+                </div>
+                <div id="resultArea" style="display: none;">
+                    <h2>Translation Result</h2>
+                    <div id="translationResult" class="output-display"></div>
+                    <button id="copyButton">Copy</button>
+                    <button id="twitterShareButton">Tweet</button>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script type="module" src="questionMode.js"></script>
+</body>
+</html>

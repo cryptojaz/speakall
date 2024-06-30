@@ -1,123 +1,54 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpeakAll - Omnilingual Communicator</title>
-    <link rel="stylesheet" href="styles.css">
-   
-    <script src="https://unpkg.com/globe.gl"></script>
-    <script src="https://unpkg.com/topojson-client@3"></script>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>SpeakAll - Omnilingual Communicator</title>
+        <link rel="stylesheet" href="styles.css">
+    
+        <script src="https://unpkg.com/globe.gl"></script>
+        <script src="https://unpkg.com/topojson-client@3"></script>
 
-    <link rel="icon" type="image/x-icon" href="sa.ico">
+        <link rel="icon" type="image/x-icon" href="sa.ico">
 
-    <script type="module" src="app.js"></script>
-</head>
-<body>
-    <div class="app-container">
-        <header>
-            <h1>SpeakAll</h1>
-            <p>Your Omnilingual Superpower</p>
-        </header>
-        <main>
-            <div class="translation-container">
-                <div class="category-selector">
-                    <button id="modernLanguages" class="category-button active">Modern Languages</button>
-                    <button id="historicLanguages" class="category-button">Historic Languages</button>
-                    <button id="alienLanguage" class="category-button">Alien Languages</button>
-                    <button id="funLanguages" class="category-button">Fun Languages</button>
-                </div>
-                <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
-                <select id="targetLanguage">
-                    <option value="Afrikaans">Afrikaans</option>
-                    <option value="Albanian">Albanian</option>
-                    <option value="Arabic">Arabic</option>
-                    <option value="Armenian">Armenian</option>
-                    <option value="Basque">Basque</option>
-                    <option value="Bengali">Bengali</option>
-                    <option value="Bulgarian">Bulgarian</option>
-                    <option value="Catalan">Catalan</option>
-                    <option value="Cambodian">Cambodian</option>
-                    <option value="Chinese (Mandarin)">Chinese (Mandarin)</option>
-                    <option value="Croatian">Croatian</option>
-                    <option value="Czech">Czech</option>
-                    <option value="Danish">Danish</option>
-                    <option value="Dutch">Dutch</option>
-                    <option value="English">English</option>
-                    <option value="Estonian">Estonian</option>
-                    <option value="Fiji">Fiji</option>
-                    <option value="Finnish">Finnish</option>
-                    <option value="French">French</option>
-                    <option value="Georgian">Georgian</option>
-                    <option value="German">German</option>
-                    <option value="Greek">Greek</option>
-                    <option value="Gujarati">Gujarati</option>
-                    <option value="Hebrew">Hebrew</option>
-                    <option value="Hindi">Hindi</option>
-                    <option value="Hungarian">Hungarian</option>
-                    <option value="Icelandic">Icelandic</option>
-                    <option value="Indonesian">Indonesian</option>
-                    <option value="Irish">Irish</option>
-                    <option value="Italian">Italian</option>
-                    <option value="Japanese">Japanese</option>
-                    <option value="Javanese">Javanese</option>
-                    <option value="Korean">Korean</option>
-                    <option value="Latin">Latin</option>
-                    <option value="Latvian">Latvian</option>
-                    <option value="Lithuanian">Lithuanian</option>
-                    <option value="Macedonian">Macedonian</option>
-                    <option value="Malay">Malay</option>
-                    <option value="Malayalam">Malayalam</option>
-                    <option value="Maltese">Maltese</option>
-                    <option value="Maori">Maori</option>
-                    <option value="Marathi">Marathi</option>
-                    <option value="Mongolian">Mongolian</option>
-                    <option value="Nepali">Nepali</option>
-                    <option value="Norwegian">Norwegian</option>
-                    <option value="Persian">Persian</option>
-                    <option value="Polish">Polish</option>
-                    <option value="Portuguese">Portuguese</option>
-                    <option value="Punjabi">Punjabi</option>
-                    <option value="Quechua">Quechua</option>
-                    <option value="Romanian">Romanian</option>
-                    <option value="Russian">Russian</option>
-                    <option value="Samoan">Samoan</option>
-                    <option value="Serbian">Serbian</option>
-                    <option value="Slovak">Slovak</option>
-                    <option value="Slovenian">Slovenian</option>
-                    <option value="Spanish">Spanish</option>
-                    <option value="Swahili">Swahili</option>
-                    <option value="Swedish">Swedish</option>
-                    <option value="Tamil">Tamil</option>
-                    <option value="Tatar">Tatar</option>
-                    <option value="Telugu">Telugu</option>
-                    <option value="Thai">Thai</option>
-                    <option value="Tibetan">Tibetan</option>
-                    <option value="Tonga">Tonga</option>
-                    <option value="Turkish">Turkish</option>
-                    <option value="Ukrainian">Ukrainian</option>
-                    <option value="Urdu">Urdu</option>
-                    <option value="Uzbek">Uzbek</option>
-                    <option value="Vietnamese">Vietnamese</option>
-                    <option value="Welsh">Welsh</option>
-                    <option value="Xhosa">Xhosa</option>
-                </select>
-                <button id="translateButton">Translate</button>
-                <div id="outputText" class="output-display"></div>
-                <button id="copyButton" disabled>Copy</button>
-                <button id="twitterShareButton">Post</button>
-               
-
-                
-            </div>
+        <script type="module" src="app.js"></script>
+    </head>
+    <body>
+        <div class="app-container">
+            <header>
+                <h1>SpeakAll</h1>
+                <p>Your Omnilingual Superpower</p>
+            </header>
+            <main>
             
-            <div class="visual-element">
-                <div class="globe-placeholder"></div>
-                <div id="globeContainer"></div>
-                <div id="countryInfo"></div>
-            </div>
-        </main>
-    </div>
-  
-</body>
-</html>
+                <div class="translation-container">
+                    <div class="category-selector">
+                        <button id="modernLanguages" class="category-button active">Modern Languages</button>
+                        <button id="historicLanguages" class="category-button">Historic Languages</button>
+                        <button id="alienLanguage" class="category-button">Alien Languages</button>
+                        <button id="funLanguages" class="category-button">Fun Languages</button>
+                    </div>
+                
+                    <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
+                    <select id="targetLanguage"></select>
+                    <button id="translateButton">Translate</button>
+                    <div id="outputText" class="output-display"></div>
+                    <button id="copyButton" disabled>Copy</button>
+                    <button id="twitterShareButton">Post</button>
+                
+
+                    
+                </div>
+                <div id="questionModeTab">
+                    <button id="openQuestionMode">Question Mode</button>
+                </div>
+                <div class="visual-element">
+                    <div class="globe-placeholder"></div>
+                    <div id="globeContainer"></div>
+                    <div id="countryInfo"></div>
+                </div>
+            </main>
+        </div>
+    
+    </body>
+    </html>

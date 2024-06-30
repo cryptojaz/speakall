@@ -46,6 +46,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
 
+    document.getElementById('openQuestionMode').addEventListener('click', () => {
+        window.location.href = 'questionMode.html';
+    });
     const categoryButtons = document.querySelectorAll('.category-button');
     let currentCategory = 'modernLanguages';
 
