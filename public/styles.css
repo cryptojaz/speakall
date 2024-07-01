@@ -311,3 +311,13 @@ body {
 #translateButton {
   margin-left: 10px;
 }
+#translateImage {
+  background: linear-gradient(45deg, #4c9baf, #05ade5);
+  color: white;
+}
+
+#translateImage:hover, #translateImage.active {
+  background: linear-gradient(90deg, #4c9baf, #05ade5);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px #4CAF50;
+}

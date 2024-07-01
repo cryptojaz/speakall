@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const TwitterShareButtonButton = document.getElementById('TwitterShareButton');
     const modes = ['modernLanguages', 'historicLanguages', 'alienLanguage', 'funLanguages'];
 
+    const imageUpload = document.getElementById('imageUpload');
+    if (!imageUpload) {
+        console.error('imageUpload input not found');
+    }
+ 
     function shuffleMode() {
         return modes[Math.floor(Math.random() * modes.length)];
     }
@@ -44,8 +49,9 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
         try {
             const response = await fetch('https://ipapi.co/json/');
             const data = await response.json();
-            globe.pointOfView({ lat: data.latitude, lng: data.longitude, altitude: 2.5 });
-        } catch (error) {
+            if (globe && typeof globe.pointOfView === 'function') {
+                globe.pointOfView({ lat: data.latitude, lng: data.longitude, altitude: 2.5 });
+            } } catch (error) {
             console.error('Error fetching location:', error);
         }
     }
@@ -80,6 +86,11 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             case 'funLanguages':
                 options = Object.keys(funLanguageInfo);
                 break;
+            case 'translateImage':
+                options = Object.keys(languageInfo); // Use modern languages for image translation
+                break;
+            default:
+                options = [];
         }
         options.forEach(option => {
             const optionElement = document.createElement('option');
@@ -87,18 +98,19 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             optionElement.textContent = option;
             targetLanguage.appendChild(optionElement);
         });
-         // Update globe and info with the first option in the new category
-    if (options.length > 0) {
-        updateGlobeAndInfo(options[0]);
+        // Update globe and info with the first option in the new category
+        if (options.length > 0) {
+            updateGlobeAndInfo(options[0]);
+        }
     }
-    }
-
     categoryButtons.forEach(button => {
         button.addEventListener('click', () => {
-            categoryButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
-            currentCategory = button.id;
-            updateLanguageOptions(currentCategory);
+            if (button.id !== 'translateImage') {
+                categoryButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                currentCategory = button.id;
+                updateLanguageOptions(currentCategory);
+            }
         });
     });
 
@@ -121,57 +133,83 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             });
           
         });
-        function updateGlobeAndInfo(selection) {
-            console.log('Updating globe and info for:', selection, 'in category:', currentCategory);
-            let info;
-            let currentLanguageSet;
-            switch(currentCategory) {
-                case 'modernLanguages':
-                    currentLanguageSet = languageInfo;
-                    break;
-                case 'historicLanguages':
-                    currentLanguageSet = historicLanguageInfo;
-                    break;
-                case 'alienLanguage':
-                    currentLanguageSet = alienLanguageInfo;
-                    break;
-                case 'funLanguages':
-                    currentLanguageSet = funLanguageInfo;
-                    break;
-            }
-        
-            info = currentLanguageSet[selection];
-        
-            if (!info) {
-                info = { 
-                    coordinates: [0, 0], 
-                    fact: `Information for ${selection} is not available yet.`
-                };
-            }
-        
-            if (currentCategory === 'alienLanguage') {
-                globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
-                globe = null;  // Reset globe when showing alien image
-            } else {
-                if (!globe) {
-                    globeContainer.innerHTML = '';
-                    initGlobe();
-                }
-                if (globe && typeof globe.pointOfView === 'function') {
-                    globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
-                    highlightCountry(selection);
-                }
-            }
-        
-            // Always update the country info, regardless of category
-            countryInfo.innerHTML = `
-                <h3>${selection}</h3>
-                <p>${info.fact}</p>
-            `;
-        
-            console.log('Updated info for:', selection, info);
+ 
+   function updateGlobeAndInfo(selection) {
+        console.log('Updating globe and info for:', selection, 'in category:', currentCategory);
+        let info;
+        let currentLanguageSet;
+        switch(currentCategory) {
+            case 'modernLanguages':
+                currentLanguageSet = languageInfo;
+                break;
+            case 'historicLanguages':
+                currentLanguageSet = historicLanguageInfo;
+                break;
+            case 'alienLanguage':
+                currentLanguageSet = alienLanguageInfo;
+                break;
+            case 'funLanguages':
+                currentLanguageSet = funLanguageInfo;
+                break;
+            case 'translateImage':
+                // For translateImage, we don't need to update the globe or info
+                return;
+            default:
+                console.error('Unknown category:', currentCategory);
+                return;
         }
-        
+    
+        info = currentLanguageSet[selection];
+    
+        if (!info) {
+            info = { 
+                coordinates: [0, 0], 
+                fact: `Information for ${selection} is not available yet.`
+            };
+        }
+    
+        if (currentCategory === 'alienLanguage') {
+            globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
+            globe = null;  // Reset globe when showing alien image
+        } else {
+            if (!globe) {
+                globeContainer.innerHTML = '';
+                initGlobe();
+            }
+            if (globe && typeof globe.pointOfView === 'function') {
+                globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
+                highlightCountry(selection);
+            }
+        }
+    
+        // Always update the country info, regardless of category
+        countryInfo.innerHTML = `
+            <h3>${selection}</h3>
+            <p>${info.fact}</p>
+        `;
+    
+        console.log('Updated info for:', selection, info);
+    }
+
+    function highlightActiveButton(category) {
+        categoryButtons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.id === category) {
+                btn.classList.add('active');
+            }
+        });
+    }
+
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            currentCategory = button.id;
+            highlightActiveButton(currentCategory);
+            if (button.id !== 'translateImage') {
+                updateLanguageOptions(currentCategory);
+            }
+        });
+    });
+
         function highlightCountry(countryName) {
             if (!countriesData || typeof THREE === 'undefined' || !globe) return;
         
@@ -235,42 +273,105 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
       });
       
       
+ 
+      const translateImageButton = document.getElementById('translateImage');
+    
+      if (translateImageButton && imageUpload) {
+          translateImageButton.addEventListener('click', () => {
+              imageUpload.click();
+          });
       
+          
+          
+          let uploadedImageData = null;
 
-      
-    translateButton.addEventListener('click', async () => {
-        const text = inputText.value;
-        const language = targetLanguage.value;
-    
-        try {
-            const response = await fetch('/api/translate', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ text, targetLanguage: language }),
-              });
-          
-            console.log('Response status:', response.status);
-            console.log('Response headers:', response.headers);
-          
-            if (!response.ok) {
-              const errorText = await response.text();
-              console.error('Error response:', errorText);
-              throw new Error(`Translation failed: ${response.statusText}. Details: ${errorText}`);
+          imageUpload.addEventListener('change', async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = async (e) => {
+                    const base64Image = e.target.result.split(',')[1]; // Remove the data URL prefix
+                    uploadedImageData = {
+                        data: base64Image,
+                        mimeType: file.type
+                    };
+                    
+                    globeContainer.innerHTML = `<img src="data:${file.type};base64,${base64Image}" alt="Uploaded Image" style="width:100%;height:100%;object-fit:contain;">`;
+                    countryInfo.innerHTML = `<h3>Selected Image</h3><p>${file.name}</p>`;
+                    inputText.style.display = 'none';
+                    targetLanguage.style.display = 'none';
+                    translateButton.textContent = 'Translate Image';
+                    outputText.textContent = 'Image uploaded. Click Translate Image to process.';
+                };
+                reader.readAsDataURL(file);
             }
+        });
+        
+        translateButton.addEventListener('click', async () => {
+            const language = targetLanguage.value;
+            let text = inputText.value;
+        
+            if (uploadedImageData) {
+                try {
+                    const describeResponse = await fetch('/api/describeImage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            image: uploadedImageData.data, 
+                            mimeType: uploadedImageData.mimeType 
+                        }),
+                    });
+        
+                    const responseData = await describeResponse.json();
+        
+                    if (!describeResponse.ok) {
+                        throw new Error(`Image description failed: ${responseData.error}. Details: ${JSON.stringify(responseData.details)}`);
+                    }
+        
+                    text = responseData.englishDescription;
+                    inputText.value = text;
+                } catch (error) {
+                    console.error('Error describing image:', error);
+                    outputText.textContent = 'An error occurred while describing the image: ' + error.message;
+                    return;
+                }
+              }
           
-    
-            const data = await response.json();
-            outputText.textContent = data.result;
-            copyButton.disabled = false;
-            updateGlobeAndInfo(language);
-        } catch (error) {
-            console.error('Error during translation:', error);
-            outputText.textContent = 'An error occurred during translation: ' + error.message;
-            copyButton.disabled = true;
-        }
-    });
+              if (!text.trim()) {
+                  outputText.textContent = 'Please enter text to translate or upload an image.';
+                  return;
+              }
+          
+              try {
+                  const translateResponse = await fetch('/api/translate', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({ text, targetLanguage: language }),
+                  });
+                
+                  if (!translateResponse.ok) {
+                      const errorText = await translateResponse.text();
+                      throw new Error(`Translation failed: ${translateResponse.statusText}. Details: ${errorText}`);
+                  }
+          
+                  const translateData = await translateResponse.json();
+                  outputText.textContent = translateData.result;
+                  copyButton.disabled = false;
+                  updateGlobeAndInfo(language);
+              } catch (error) {
+                  console.error('Error during translation:', error);
+                  outputText.textContent = 'An error occurred during translation: ' + error.message;
+                  copyButton.disabled = true;
+              }
+          
+              uploadedImageData = null; // Reset the uploaded image data
+          });
+
+
     copyButton.disabled = true;
     updateGlobeAndInfo(targetLanguage.value);
-});
+      }})

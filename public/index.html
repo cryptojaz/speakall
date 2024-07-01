@@ -1,69 +1,71 @@
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>SpeakAll - Omnilingual Communicator</title>
-        <link rel="stylesheet" href="styles.css">
-    
-        <script src="https://unpkg.com/three"></script>
-        <script src="https://unpkg.com/globe.gl"></script>
-        <script src="https://unpkg.com/topojson-client"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-        <link rel="icon" type="image/x-icon" href="sa.ico">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpeakAll - Omnilingual Communicator</title>
+    <link rel="stylesheet" href="styles.css">
 
-      
-    </head>
-    <body>
-        <div class="page-container">
-            <div class="scale-wrapper">
-            <div class="content-wrap">
-        <div class="app-container">
-            <header>
-                <h1>SpeakAll</h1>
-                <p>Your Omnilingual Superpower</p>
-            </header>
-            <main>
-            
-                <div class="translation-container">
-                    <div class="category-selector">
-                        <button id="modernLanguages" class="category-button active">Modern Languages</button>
-                        <button id="historicLanguages" class="category-button">Historic Languages</button>
-                        <button id="alienLanguage" class="category-button">Alien Languages</button>
-                        <button id="funLanguages" class="category-button">Fun Languages</button>
-                    </div>
-                
-                    <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
-                    <select id="targetLanguage"></select>
-                    <button id="translateButton">Translate</button>
-                    <div id="outputText" class="output-display"></div>
-                    <button id="copyButton" disabled>Copy</button>
-                    <button id="twitterShareButton">Post</button>
-                
+    <script src="https://unpkg.com/three"></script>
+    <script src="https://unpkg.com/globe.gl"></script>
+    <script src="https://unpkg.com/topojson-client"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="sa.ico">
 
-                    
+  
+</head>
+<body>
+    <div class="page-container">
+        <div class="scale-wrapper">
+        <div class="content-wrap">
+    <div class="app-container">
+        <header>
+            <h1>SpeakAll</h1>
+            <p>Your Omnilingual Superpower</p>
+        </header>
+        <main>
+        
+            <div class="translation-container">
+                <div class="category-selector">
+                    <button id="modernLanguages" class="category-button active">Modern Languages</button>
+                    <button id="historicLanguages" class="category-button">Historic Languages</button>
+                    <button id="alienLanguage" class="category-button">Alien Languages</button>
+                    <button id="funLanguages" class="category-button">Fun Languages</button>
+                    <button id="translateImage" class="category-button">Translate Image</button>
+                    <input type="file" id="imageUpload" accept="image/*" style="display: none;">
                 </div>
             
-                <div class="visual-element">
-                    <div class="globe-placeholder"></div>
-                    <div id="globeContainer"></div>
-                    <div id="countryInfo"></div>
-                </div>
-           
-            </main>
-        </div>
-    </div> </div>
-    <footer>
-        <p>Created by <a href="https://x.com/riskaversetech" target="_blank">Risk Averse Tech    </a>    Powered by <a href="https://www.anthropic.com/news/claude-3-5-sonnet" target="_blank">Claude Sonnet 3.5</a></p>
-    </footer>
+                <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
+                <select id="targetLanguage"></select>
+                <button id="translateButton">Translate</button>
+                <div id="outputText" class="output-display"></div>
+                <button id="copyButton" disabled>Copy</button>
+                <button id="twitterShareButton">Post</button>
+            
+
+                
+            </div>
+        
+            <div class="visual-element">
+                <div class="globe-placeholder"></div>
+                <div id="globeContainer"></div>
+                <div id="countryInfo"></div>
+            </div>
+       
+        </main>
+    </div>
+</div> </div>
+<footer>
+    <p>Created by <a href="https://x.com/riskaversetech" target="_blank">Risk Averse Tech    </a>    <a href="/faq.html" target="_blank">   | FAQ |</a>  Powered by <a href="https://www.anthropic.com/news/claude-3-5-sonnet" target="_blank">Claude Sonnet 3.5   </a></footer> 
+ </p>
 </div>
 <div id="questionModeTab">
-    <button id="openQuestionMode">Question Mode</button>
+<button id="openQuestionMode">Question Mode</button>
 </div>
 <script>
-    window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
-  </script>
-  <script defer src="/_vercel/insights/script.js"></script>
+window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>
