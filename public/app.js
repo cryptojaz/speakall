@@ -67,6 +67,21 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
     document.getElementById('openQuestionMode').addEventListener('click', () => {
         window.location.href = 'questionMode.html';
     });
+   
+    function resetUIAfterImageDescription() {
+        globeContainer.innerHTML = ''; // Clear the image
+        initGlobe(); // Reinitialize the globe
+        inputText.style.display = 'block';
+        targetLanguage.style.display = 'block';
+        translateButton.textContent = 'Translate';
+        if (outputText.textContent && outputText.textContent !== 'Image uploaded. Click Translate Image to process.') {
+            inputText.value = outputText.textContent;
+        } else {
+            inputText.value = '';
+        }
+        outputText.textContent = '';
+        uploadedImageData = null;
+    }
     const categoryButtons = document.querySelectorAll('.category-button');
     let currentCategory = 'modernLanguages';
 
@@ -114,6 +129,16 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
         });
     });
 
+    categoryButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            currentCategory = button.id;
+            highlightActiveButton(currentCategory);
+            if (button.id !== 'translateImage') {
+                updateLanguageOptions(currentCategory);
+                resetUIAfterImageDescription();
+            }
+        });
+    });
         // Add the highlightActiveButton function here
         function highlightActiveButton(category) {
             categoryButtons.forEach(btn => {
@@ -133,63 +158,62 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             });
           
         });
- 
-   function updateGlobeAndInfo(selection) {
-        console.log('Updating globe and info for:', selection, 'in category:', currentCategory);
-        let info;
-        let currentLanguageSet;
-        switch(currentCategory) {
-            case 'modernLanguages':
-                currentLanguageSet = languageInfo;
-                break;
-            case 'historicLanguages':
-                currentLanguageSet = historicLanguageInfo;
-                break;
-            case 'alienLanguage':
-                currentLanguageSet = alienLanguageInfo;
-                break;
-            case 'funLanguages':
-                currentLanguageSet = funLanguageInfo;
-                break;
-            case 'translateImage':
-                // For translateImage, we don't need to update the globe or info
-                return;
-            default:
-                console.error('Unknown category:', currentCategory);
-                return;
-        }
-    
-        info = currentLanguageSet[selection];
-    
-        if (!info) {
-            info = { 
-                coordinates: [0, 0], 
-                fact: `Information for ${selection} is not available yet.`
-            };
-        }
-    
-        if (currentCategory === 'alienLanguage') {
-            globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
-            globe = null;  // Reset globe when showing alien image
-        } else {
-            if (!globe) {
-                globeContainer.innerHTML = '';
-                initGlobe();
+        function updateGlobeAndInfo(selection) {
+            console.log('Updating globe and info for:', selection, 'in category:', currentCategory);
+            let info;
+            let currentLanguageSet;
+            switch(currentCategory) {
+                case 'modernLanguages':
+                    currentLanguageSet = languageInfo;
+                    break;
+                case 'historicLanguages':
+                    currentLanguageSet = historicLanguageInfo;
+                    break;
+                case 'alienLanguage':
+                    currentLanguageSet = alienLanguageInfo;
+                    break;
+                case 'funLanguages':
+                    currentLanguageSet = funLanguageInfo;
+                    break;
+                case 'translateImage':
+                    // For translateImage, we don't need to update the globe or info
+                    return;
+                default:
+                    console.error('Unknown category:', currentCategory);
+                    return;
             }
-            if (globe && typeof globe.pointOfView === 'function') {
-                globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
-                highlightCountry(selection);
+        
+            info = currentLanguageSet[selection];
+        
+            if (!info) {
+                info = { 
+                    coordinates: [0, 0], 
+                    fact: `Information for ${selection} is not available yet.`
+                };
             }
+        
+            if (currentCategory === 'alienLanguage') {
+                globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
+                globe = null;  // Reset globe when showing alien image
+            } else {
+                if (!globe) {
+                    globeContainer.innerHTML = '';
+                    initGlobe();
+                }
+                if (globe && typeof globe.pointOfView === 'function') {
+                    globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
+                    highlightCountry(selection);
+                }
+            }
+        
+            // Always update the country info, regardless of category
+            countryInfo.innerHTML = `
+                <h3>${selection}</h3>
+                <p>${info.fact}</p>
+            `;
+        
+            console.log('Updated info for:', selection, info);
         }
-    
-        // Always update the country info, regardless of category
-        countryInfo.innerHTML = `
-            <h3>${selection}</h3>
-            <p>${info.fact}</p>
-        `;
-    
-        console.log('Updated info for:', selection, info);
-    }
 
     function highlightActiveButton(category) {
         categoryButtons.forEach(btn => {
