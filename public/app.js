@@ -15,18 +15,30 @@ document.addEventListener('DOMContentLoaded', () => {
         return modes[Math.floor(Math.random() * modes.length)];
     }
 
+    let countriesData;
+
+fetch('https://unpkg.com/world-atlas/countries-50m.json')
+    .then(res => res.json())
+    .then(data => {
+        countriesData = topojson.feature(data, data.objects.countries);
+    });
     // Globe initialization
-    const globe = Globe()
-        .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
-        .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
-        .width(400)
-        .height(400)
-        .backgroundColor('rgba(10,10,25,0)')
-        .atmosphereColor('rgba(65,105,225,0.3)')
-        .atmosphereAltitude(0.25);
+    let globe;
 
-    globe(globeContainer);
-
+    function initGlobe() {
+        globe = Globe()
+            .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg')
+            .bumpImageUrl('https://unpkg.com/three-globe/example/img/earth-topology.png')
+            .width(400)
+            .height(400)
+            .backgroundColor('rgba(10,10,25,0)')
+            .atmosphereColor('rgba(65,105,225,0.3)')
+            .atmosphereAltitude(0.25);
+    
+        globe(globeContainer);
+    }
+    
+    initGlobe();
     // Set initial location based on IP
     async function setInitialLocation() {
         try {
@@ -105,63 +117,68 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
         
-      
-
-
-
-    function updateGlobeAndInfo(selection) {
-        let info;
-        switch(currentCategory) {
-            case 'modernLanguages':
-                info = languageInfo[selection];
-                break;
-            case 'historicLanguages':
-                info = historicLanguageInfo[selection];
-                break;
-            case 'alienLanguage':
-                info = alienLanguageInfo[selection];
-                break;
-            case 'funLanguages':
-                info = funLanguageInfo[selection];
-                break;
-        }
-
-        if (!info) {
-            info = { 
-                coordinates: [0, 0], 
-                fact: `Information for ${selection} is not available yet.`
-            };
-        }
-
-        // Update globe visualization
-        if (currentCategory === 'alienLanguage') {
-            globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`; } else {
-            if (globeContainer.innerHTML.includes('img')) {
-                globeContainer.innerHTML = '';
-                globe(globeContainer);
+        function updateGlobeAndInfo(selection) {
+            let info;
+            switch(currentCategory) {
+                case 'modernLanguages':
+                    info = languageInfo[selection];
+                    break;
+                case 'historicLanguages':
+                    info = historicLanguageInfo[selection];
+                    break;
+                case 'alienLanguage':
+                    info = alienLanguageInfo[selection];
+                    break;
+                case 'funLanguages':
+                    info = funLanguageInfo[selection];
+                    break;
             }
-            globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
-        }
-
-        countryInfo.innerHTML = `
-            <h3>${selection}</h3>
-            <p>${info.fact}</p>
-        `;
-    }
-
-    function highlightCountry(countryName) {
-        const highlightMaterial = new THREE.MeshPhongMaterial({
-          color: 0xff0000,
-          transparent: true,
-          opacity: 0.6
-        });
         
-        globe.polygonsData(countriesData.features)
-          .polygonAltitude(0.01)
-          .polygonCapColor(d => d.properties.name === countryName ? highlightMaterial : 'transparent')
-          .polygonSideColor(() => 'rgba(0, 100, 0, 0.15)')
-          .polygonStrokeColor(() => '#111');
-      }
+            if (!info) {
+                info = { 
+                    coordinates: [0, 0], 
+                    fact: `Information for ${selection} is not available yet.`
+                };
+            }
+        
+            if (currentCategory === 'alienLanguage') {
+                globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
+            } else {
+                if (globeContainer.innerHTML.includes('img')) {
+                    globeContainer.innerHTML = '';
+                    initGlobe();
+                }
+                globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
+                
+                if (currentCategory === 'modernLanguages' || currentCategory === 'historicLanguages' || currentCategory === 'funLanguages') {
+                    highlightCountry(selection);
+                }
+            }
+        
+            // Update country info
+            countryInfo.innerHTML = `
+                <h3>${selection}</h3>
+                <p>${info.fact}</p>
+            `;
+        }
+        function highlightCountry(countryName) {
+            if (!countriesData) return;
+        
+            const highlightMaterial = new THREE.MeshPhongMaterial({
+                color: 0xff0000,  // Bright red
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            globe.polygonsData(countriesData.features)
+                .polygonAltitude(0.06)  // Increased altitude for more prominence
+                .polygonCapColor(d => d.properties.name.toLowerCase().includes(countryName.toLowerCase()) ? highlightMaterial : 'rgba(200, 200, 200, 0.3)')
+                .polygonSideColor(() => 'rgba(255, 0, 0, 0.5)')  // Red side color
+                .polygonStrokeColor(() => '#ff0000');  // Red stroke
+        
+            // Force a re-render
+            globe.scene().dispatchEvent(new CustomEvent('any'));
+        }
       
     currentCategory = shuffleMode();
     // Initial setup
@@ -189,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Using a series of dashes or an emoji as a divider
         const divider = " —— ";
         const customMessage = "SpeakAll - Speak in any language, I mean any language!";
-        const tweetContent = encodeURIComponent(`${customMessage} ${divider} ${outputText} https://claude1.vercel.app/`);
+        const tweetContent = encodeURIComponent(`${customMessage} ${divider} ${outputText} https://www.speakallai.com/`);
         const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetContent}`;
         window.open(tweetUrl, '_blank');
       });

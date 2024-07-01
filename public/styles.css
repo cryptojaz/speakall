@@ -35,10 +35,6 @@ body {
 
 }
 
-.content-wrap {
-  flex: 1;
-
-}
 
 .app-container {
   flex: 1;
@@ -89,14 +85,26 @@ textarea, button {
 }
 
 select {
-  width: 100%;
-  padding: 0.5rem;
-  border: none;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  background-color: var(--background-color);
   color: var(--text-color);
-  font-size: 1rem;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding-right: 20px;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%23ffffff" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 5px top 50%;
 }
+
+select option {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+select::-ms-expand {
+  display: none;
+}
+
 textarea {
   height: 120px;
   resize: none;
@@ -216,6 +224,7 @@ button:hover {
 footer {
   width: 100%;
   text-align: center;
+  margin-top: auto;
   padding: 10px;
   background-color: rgba(20, 166, 110, 0.05);
   color: var(--primary-color);
@@ -238,6 +247,20 @@ footer a:hover {
 
 /* Modify the media query */
 @media (max-width: 768px) {
+  
+  #globeContainer, #countryInfo {
+    width: 100%;
+    height: auto;
+}
+
+.category-selector {
+    flex-wrap: wrap;
+}
+
+.category-button {
+    margin: 5px;
+}
+
   .app-container {
     padding: 0.5rem;
   }
@@ -256,6 +279,7 @@ footer a:hover {
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 90px);
+  overflow-y: auto; /* Add this line */
 }
 
 .app-container {

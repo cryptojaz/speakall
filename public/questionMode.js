@@ -38,6 +38,26 @@ document.addEventListener('DOMContentLoaded', function() {
 
         updateSelectionSummary();
 
+    // Remove existing image if any
+    const existingImage = document.getElementById('languageImage');
+    if (existingImage) {
+        existingImage.remove();
+    }
+    if (currentQuestionIndex >= questions.length - 1) {
+        const imageContainer = document.createElement('div');
+        imageContainer.id = 'languageImage';
+        imageContainer.style.backgroundImage = `url('images/test.png')`;
+        imageContainer.style.width = '400px';  // Increased size
+        imageContainer.style.height ='400px';  // Increased size
+        imageContainer.style.backgroundSize = 'cover';
+        imageContainer.style.position = 'absolute';
+        imageContainer.style.right = '15%';  // Moved more to the left
+        imageContainer.style.top = '50%';
+        imageContainer.style.transform = 'translateY(-50%)';
+        document.getElementById('questionContent').appendChild(imageContainer);
+    }
+ 
+
         switch (question.type) {
             case 'category':
             case 'language':
@@ -46,7 +66,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     button.textContent = option;
                     button.addEventListener('click', () => selectOption(option));
                     answerArea.appendChild(button);
+
+              
                 });
+                                     // Add image for the last two questions
+
                 break;
             case 'text':
                 const textarea = document.createElement('textarea');
@@ -54,11 +78,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 textarea.className = 'full-width';
                 answerArea.appendChild(textarea);
                 break;
+
+          
         }
 
         updateProgressBar();
         updateNavigationButtons();
     }
+
 
     function updateSelectionSummary() {
         const summary = document.getElementById('selectionSummary');
@@ -172,7 +199,11 @@ document.addEventListener('DOMContentLoaded', function() {
             completedMessage.style.color = '#4CAF50';
             completedMessage.style.fontWeight = 'bold';
             document.getElementById('selectionSummary').appendChild(completedMessage);
-            
+               // Move the image to the result area
+        const imageContainer = document.getElementById('languageImage');
+        if (imageContainer) {
+            resultArea.appendChild(imageContainer);
+        }
         } catch (error) {
             console.error('Error during translation:', error);
             translationResult.textContent = 'An error occurred during translation.';
