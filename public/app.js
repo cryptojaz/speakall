@@ -87,7 +87,10 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             optionElement.textContent = option;
             targetLanguage.appendChild(optionElement);
         });
-        updateGlobeAndInfo(targetLanguage.value);
+         // Update globe and info with the first option in the new category
+    if (options.length > 0) {
+        updateGlobeAndInfo(options[0]);
+    }
     }
 
     categoryButtons.forEach(button => {
@@ -114,25 +117,30 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
                 currentCategory = button.id;
                 highlightActiveButton(currentCategory);
                 updateLanguageOptions(currentCategory);
+              
             });
+          
         });
-        
         function updateGlobeAndInfo(selection) {
+            console.log('Updating globe and info for:', selection, 'in category:', currentCategory);
             let info;
+            let currentLanguageSet;
             switch(currentCategory) {
                 case 'modernLanguages':
-                    info = languageInfo[selection];
+                    currentLanguageSet = languageInfo;
                     break;
                 case 'historicLanguages':
-                    info = historicLanguageInfo[selection];
+                    currentLanguageSet = historicLanguageInfo;
                     break;
                 case 'alienLanguage':
-                    info = alienLanguageInfo[selection];
+                    currentLanguageSet = alienLanguageInfo;
                     break;
                 case 'funLanguages':
-                    info = funLanguageInfo[selection];
+                    currentLanguageSet = funLanguageInfo;
                     break;
             }
+        
+            info = currentLanguageSet[selection];
         
             if (!info) {
                 info = { 
@@ -143,26 +151,29 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
         
             if (currentCategory === 'alienLanguage') {
                 globeContainer.innerHTML = `<img src="images/${selection.toLowerCase().replace(' ', '-')}.jpeg" alt="${selection}" style="width:100%;height:100%;object-fit:cover;">`;
+                globe = null;  // Reset globe when showing alien image
             } else {
-                if (globeContainer.innerHTML.includes('img')) {
+                if (!globe) {
                     globeContainer.innerHTML = '';
                     initGlobe();
                 }
-                globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
-                
-                if (currentCategory === 'modernLanguages' || currentCategory === 'historicLanguages' || currentCategory === 'funLanguages') {
+                if (globe && typeof globe.pointOfView === 'function') {
+                    globe.pointOfView({ lat: info.coordinates[1], lng: info.coordinates[0], altitude: 1.5 }, 1000);
                     highlightCountry(selection);
                 }
             }
         
-            // Update country info
+            // Always update the country info, regardless of category
             countryInfo.innerHTML = `
                 <h3>${selection}</h3>
                 <p>${info.fact}</p>
             `;
+        
+            console.log('Updated info for:', selection, info);
         }
+        
         function highlightCountry(countryName) {
-            if (!countriesData) return;
+            if (!countriesData || typeof THREE === 'undefined' || !globe) return;
         
             const highlightMaterial = new THREE.MeshPhongMaterial({
                 color: 0xff0000,  // Bright red
@@ -170,13 +181,24 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
                 opacity: 0.8
             });
             
-            globe.polygonsData(countriesData.features)
-                .polygonAltitude(0.06)  // Increased altitude for more prominence
-                .polygonCapColor(d => d.properties.name.toLowerCase().includes(countryName.toLowerCase()) ? highlightMaterial : 'rgba(200, 200, 200, 0.3)')
-                .polygonSideColor(() => 'rgba(255, 0, 0, 0.5)')  // Red side color
-                .polygonStrokeColor(() => '#ff0000');  // Red stroke
+            const normalMaterial = new THREE.MeshPhongMaterial({
+                color: 0xd3d3d3,  // Light gray
+                transparent: true,
+                opacity: 0.7
+            });
         
-            // Force a re-render
+            globe.polygonsData(countriesData.features)
+                .polygonAltitude(0.06)
+                .polygonCapColor(d => {
+                    const currentInfo = languageInfo[countryName] || historicLanguageInfo[countryName] || funLanguageInfo[countryName];
+                    if (currentInfo && currentInfo.countries) {
+                        return currentInfo.countries.includes(d.properties.name) ? highlightMaterial : normalMaterial;
+                    }
+                    return normalMaterial;
+                })
+                .polygonSideColor(() => 'rgba(0, 100, 0, 0.15)')
+                .polygonStrokeColor(() => '#111');
+        
             globe.scene().dispatchEvent(new CustomEvent('any'));
         }
       
@@ -185,7 +207,8 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
     updateLanguageOptions(currentCategory);
 
     highlightActiveButton(currentCategory);
-
+    updateGlobeAndInfo(targetLanguage.value);
+    
     targetLanguage.addEventListener('change', (event) => {
         updateGlobeAndInfo(event.target.value);
     });
