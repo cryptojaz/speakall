@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     const homeLink = document.createElement('a');
-    homeLink.href = 'https://claude1.vercel.app/';
+    homeLink.href = 'https://www.speakallai.com/';
     homeLink.textContent = 'Back to Home';
     homeLink.className = 'home-link';
     resultArea.appendChild(homeLink);
