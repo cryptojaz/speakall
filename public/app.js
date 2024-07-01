@@ -288,89 +288,88 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
           imageUpload.addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (file) {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const base64Image = e.target.result.split(',')[1]; // Remove the data URL prefix
-                    uploadedImageData = {
-                        data: base64Image,
-                        mimeType: file.type
-                    };
-                    
-                    globeContainer.innerHTML = `<img src="data:${file.type};base64,${base64Image}" alt="Uploaded Image" style="width:100%;height:100%;object-fit:contain;">`;
-                    countryInfo.innerHTML = `<h3>Selected Image</h3><p>${file.name}</p>`;
-                    inputText.style.display = 'none';
-                    targetLanguage.style.display = 'none';
-                    translateButton.textContent = 'Translate Image';
-                    outputText.textContent = 'Image uploaded. Click Translate Image to process.';
+              const reader = new FileReader();
+              reader.onload = async (e) => {
+                const img = new Image();
+                img.onload = () => {
+                  const canvas = document.createElement('canvas');
+                  canvas.width = img.width;
+                  canvas.height = img.height;
+                  const ctx = canvas.getContext('2d');
+                  ctx.drawImage(img, 0, 0);
+                  const base64Image = canvas.toDataURL('image/jpeg').split(',')[1];
+                  
+                  uploadedImageData = {
+                    data: base64Image,
+                    mimeType: 'image/jpeg'
+                  };
+          
+                  globeContainer.innerHTML = `<img src="data:image/jpeg;base64,${base64Image}" alt="Uploaded Image" style="width:100%;height:100%;object-fit:contain;">`;
+                  countryInfo.innerHTML = `<h3>Selected Image</h3><p>${file.name}</p>`;
+                  inputText.style.display = 'none';
+                  targetLanguage.style.display = 'none';
+                  translateButton.textContent = 'Translate Image';
+                  outputText.textContent = 'Image uploaded. Click Translate Image to process.';
                 };
-                reader.readAsDataURL(file);
+                img.src = e.target.result;
+              };
+              reader.readAsDataURL(file);
             }
-        });
-        
-        translateButton.addEventListener('click', async () => {
-            const language = targetLanguage.value;
-            let text = inputText.value;
-        
-            if (uploadedImageData) {
-                try {
-                    const describeResponse = await fetch('/api/describeImage', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ 
-                            image: uploadedImageData.data, 
-                            mimeType: uploadedImageData.mimeType 
-                        }),
-                    });
-        
-                    const responseData = await describeResponse.json();
-        
-                    if (!describeResponse.ok) {
-                        throw new Error(`Image description failed: ${responseData.error}. Details: ${JSON.stringify(responseData.details)}`);
-                    }
-        
-                    text = responseData.englishDescription;
-                    inputText.value = text;
-                } catch (error) {
-                    console.error('Error describing image:', error);
-                    outputText.textContent = 'An error occurred while describing the image: ' + error.message;
-                    return;
-                }
-              }
-          
-              if (!text.trim()) {
-                  outputText.textContent = 'Please enter text to translate or upload an image.';
-                  return;
-              }
-          
-              try {
-                  const translateResponse = await fetch('/api/translate', {
-                      method: 'POST',
-                      headers: {
-                        'Content-Type': 'application/json',
-                      },
-                      body: JSON.stringify({ text, targetLanguage: language }),
-                  });
-                
-                  if (!translateResponse.ok) {
-                      const errorText = await translateResponse.text();
-                      throw new Error(`Translation failed: ${translateResponse.statusText}. Details: ${errorText}`);
-                  }
-          
-                  const translateData = await translateResponse.json();
-                  outputText.textContent = translateData.result;
-                  copyButton.disabled = false;
-                  updateGlobeAndInfo(language);
-              } catch (error) {
-                  console.error('Error during translation:', error);
-                  outputText.textContent = 'An error occurred during translation: ' + error.message;
-                  copyButton.disabled = true;
-              }
-          
-              uploadedImageData = null; // Reset the uploaded image data
           });
 
+
+
+        translateButton.addEventListener('click', async () => {
+            translateButton.disabled = true;
+            translateButton.classList.add('button-disabled');
+            translateButton.textContent = 'Processing...Average 10 seconds';
+             const language = targetLanguage.value;
+            let englishText = inputText.value;
+          
+            if (uploadedImageData) {
+              try {
+                const describeResponse = await fetch('/api/describeImage', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ 
+                    image: uploadedImageData.data, 
+                    mimeType: uploadedImageData.mimeType 
+                  }),
+                });
+          
+                if (!describeResponse.ok) {
+                  const errorText = await describeResponse.text();
+                  throw new Error(`Image description failed: ${errorText}`);
+                }
+          
+                const responseData = await describeResponse.json();
+                englishText = responseData.englishDescription;
+              } catch (error) {
+                console.error('Error describing image:', error);
+                outputText.textContent = 'An error occurred while describing the image: ' + error.message;
+                return;
+              }
+            }
+          
+            if (!englishText.trim()) {
+              outputText.textContent = 'Please enter text to translate or upload an image.';
+              return;
+            }
+          
+            outputText.innerHTML = `
+              <h3>Image Description:</h3>
+              <p>${englishText}</p>
+            `;
+            copyButton.disabled = false;
+            updateGlobeAndInfo(language);
+          
+            uploadedImageData = null; // Reset the uploaded image data
+            translateButton.disabled = false;
+            translateButton.classList.remove('button-disabled');
+            translateButton.textContent = 'Translate Image';
+          });
 
     copyButton.disabled = true;
     updateGlobeAndInfo(targetLanguage.value);
