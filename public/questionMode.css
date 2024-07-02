@@ -138,3 +138,14 @@
     grid-column: 1 / -1;
     width: 100%;
   }
+
+  @media (max-width: 768px) {
+    #answerArea {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.button-processing {
+    opacity: 0.5;
+    cursor: not-allowed;
+}

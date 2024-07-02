@@ -127,15 +127,18 @@ document.addEventListener('DOMContentLoaded', function() {
         navigationButtons.innerHTML = '';
     
         const prevButton = document.createElement('button');
-        prevButton.textContent = 'Previous';
         prevButton.classList.add('nav-button');
-        prevButton.addEventListener('click', () => {
-            if (currentQuestionIndex === 0) {
+        
+        if (currentQuestionIndex === 0) {
+            prevButton.textContent = 'Back to Home';
+            prevButton.addEventListener('click', () => {
                 window.location.href = 'https://www.speakallai.com/';
-            } else {
-                prevQuestion();
-            }
-        });
+            });
+        } else {
+            prevButton.textContent = 'Previous';
+            prevButton.addEventListener('click', prevQuestion);
+        }
+        
         navigationButtons.appendChild(prevButton);
     }
 
@@ -202,6 +205,9 @@ function displayUploadedImage(fileName) {
 
 
 async function translateImage() {
+    const translateButton = document.querySelector('button');
+    translateButton.disabled = true;
+    translateButton.classList.add('button-processing');
     if (!answers.language) {
         alert('Please select a target language first.');
         return;
@@ -230,6 +236,9 @@ async function translateImage() {
     } catch (error) {
         console.error('Error describing image:', error);
         alert('An error occurred while describing the image: ' + error.message);
+    } finally {
+        translateButton.disabled = false;
+        translateButton.classList.remove('button-processing');
     }
 }
 
@@ -262,7 +271,12 @@ function updateSelectionSummary() {
     
     function prevQuestion() {
         if (currentQuestionIndex > 0) {
-            currentQuestionIndex--;
+            if (answers.inputType === 'Image' && currentQuestionIndex === questions.length - 1) {
+                currentQuestionIndex = 0;  // Go back to input type selection
+                answers = {};  // Reset answers
+            } else {
+                currentQuestionIndex--;
+            }
             updateQuestion();
         }
     }
@@ -273,7 +287,7 @@ function updateSelectionSummary() {
         const translateButton = document.getElementById('translateButton');
         if (translateButton) {
             translateButton.disabled = true;
-            translateButton.style.opacity = '0.1';
+            translateButton.classList.add('button-processing');
         }
 
         try {
@@ -312,13 +326,23 @@ function updateSelectionSummary() {
         } catch (error) {
             console.error('Error during translation:', error);
             translationResult.textContent = 'An error occurred during translation.';
+        } finally {
+            if (translateButton) {
+                translateButton.disabled = false;
+                translateButton.classList.remove('button-processing');
+            }
         }
     }
 
   
     copyButton.addEventListener('click', () => {
         navigator.clipboard.writeText(translationResult.textContent)
-            .then(() => alert('Copied to clipboard!'))
+            .then(() => {
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = 'Copy';
+                }, 2000);
+            })
             .catch(err => console.error('Failed to copy: ', err));
     });
 

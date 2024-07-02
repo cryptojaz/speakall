@@ -267,7 +267,8 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
     });
 
     copyButton.addEventListener('click', () => {
-        navigator.clipboard.writeText(outputText.textContent).then(() => {
+        const textToCopy = outputText.textContent;
+        navigator.clipboard.writeText(textToCopy).then(() => {
             copyButton.textContent = 'Copied!';
             setTimeout(() => {
                 copyButton.textContent = 'Copy';
@@ -276,7 +277,6 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             console.error('Failed to copy: ', err);
         });
     });
-
     document.getElementById('twitterShareButton').addEventListener('click', function() {
         const outputText = document.getElementById('outputText').textContent;
         // Using a series of dashes or an emoji as a divider
@@ -362,6 +362,7 @@ categoryButtons.forEach(button => {
 translateButton.addEventListener('click', async () => {
     translateButton.disabled = true;
     translateButton.classList.add('button-disabled');
+    translateButton.classList.add('button-processing');
     
     const language = targetLanguage.value;
     let textToTranslate = inputText.value;
@@ -388,14 +389,17 @@ translateButton.addEventListener('click', async () => {
             const responseData = await describeResponse.json();
             lastImageDescription = responseData.englishDescription;
             outputText.textContent = lastImageDescription;
+            copyButton.disabled = false;
             uploadedImageData = null;
-            translateButton.textContent = 'Describe Image';
+            translateButton.textContent = 'Image Description';
+            translateButton.disabled = true;
         } catch (error) {
             console.error('Error describing image:', error);
             outputText.textContent = 'An error occurred while processing the image. Please try again.';
         } finally {
             translateButton.disabled = false;
             translateButton.classList.remove('button-disabled');
+            translateButton.classList.remove('button-processing');
             translateButton.textContent = 'Translate';
         }
     } else {
