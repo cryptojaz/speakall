@@ -328,8 +328,7 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
                   isImageMode = true;
                   inputText.style.display = 'none';
                   targetLanguage.style.display = 'none';
-                  translateButton.textContent = 'Image Details';
-                  translateButton.disabled = true;
+                  translateButton.textContent = 'Translate Image';
                   outputText.textContent = 'Image uploaded. Click Translate Image to process.';
                   lastImageDescription = '';
                 };
