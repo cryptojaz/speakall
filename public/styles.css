@@ -272,6 +272,14 @@ footer a:hover {
   .visual-element {
     height: auto;
   }
+
+  body {
+    overflow-y: auto;
+}
+
+#questionModeTab {
+    left: 10px; /* Adjust this value as needed */
+}
 }
 
 .content-wrap {

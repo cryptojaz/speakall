@@ -69,18 +69,18 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
     });
    
     function resetUIAfterImageDescription() {
-        globeContainer.innerHTML = ''; // Clear the image
-        initGlobe(); // Reinitialize the globe
+        globeContainer.innerHTML = '';
+        initGlobe();
         inputText.style.display = 'block';
         targetLanguage.style.display = 'block';
         translateButton.textContent = 'Translate';
-        if (outputText.textContent && outputText.textContent !== 'Image uploaded. Click Translate Image to process.') {
-            inputText.value = outputText.textContent;
-        } else {
-            inputText.value = '';
+        if (lastImageDescription) {
+            inputText.value = lastImageDescription;
+            lastImageDescription = '';
         }
-        outputText.textContent = '';
+        outputText.textContent = ''; // Clear the output text
         uploadedImageData = null;
+        isImageMode = false;
     }
     const categoryButtons = document.querySelectorAll('.category-button');
     let currentCategory = 'modernLanguages';
@@ -118,16 +118,7 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
             updateGlobeAndInfo(options[0]);
         }
     }
-    categoryButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            if (button.id !== 'translateImage') {
-                categoryButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                currentCategory = button.id;
-                updateLanguageOptions(currentCategory);
-            }
-        });
-    });
+ 
 
     categoryButtons.forEach(button => {
         button.addEventListener('click', () => {
@@ -309,6 +300,10 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
           
           let uploadedImageData = null;
 
+          let isImageMode = false;
+          let lastImageDescription = '';
+
+            
           imageUpload.addEventListener('change', async (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -330,10 +325,12 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
           
                   globeContainer.innerHTML = `<img src="data:image/jpeg;base64,${base64Image}" alt="Uploaded Image" style="width:100%;height:100%;object-fit:contain;">`;
                   countryInfo.innerHTML = `<h3>Selected Image</h3><p>${file.name}</p>`;
+                  isImageMode = true;
                   inputText.style.display = 'none';
                   targetLanguage.style.display = 'none';
                   translateButton.textContent = 'Translate Image';
                   outputText.textContent = 'Image uploaded. Click Translate Image to process.';
+                  lastImageDescription = '';
                 };
                 img.src = e.target.result;
               };
@@ -342,59 +339,95 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
           });
 
 
+          // Modify the category button event listeners
+categoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+        if (button.id !== 'translateImage') {
+            isImageMode = false;
+            translateButton.textContent = 'Translate';
+            inputText.style.display = 'block';
+            outputText.style.display = 'block';
+            outputText.textContent = ''; // Clear the output text
+            if (lastImageDescription) {
+                inputText.value = lastImageDescription;
+                lastImageDescription = '';
+            }
+        }
+        currentCategory = button.id;
+        highlightActiveButton(currentCategory);
+        updateLanguageOptions(currentCategory);
+    });
+});
+       // Modify the translate button event listener
+translateButton.addEventListener('click', async () => {
+    translateButton.disabled = true;
+    translateButton.classList.add('button-disabled');
+    
+    const language = targetLanguage.value;
+    let textToTranslate = inputText.value;
 
-        translateButton.addEventListener('click', async () => {
-            translateButton.disabled = true;
-            translateButton.classList.add('button-disabled');
-            translateButton.textContent = 'Processing...Average 10 seconds';
-             const language = targetLanguage.value;
-            let englishText = inputText.value;
-          
-            if (uploadedImageData) {
-              try {
-                const describeResponse = await fetch('/api/describeImage', {
-                  method: 'POST',
-                  headers: {
+    if (isImageMode) {
+        translateButton.textContent = 'Processing...Average 10 seconds';
+        try {
+            const describeResponse = await fetch('/api/describeImage', {
+                method: 'POST',
+                headers: {
                     'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ 
+                },
+                body: JSON.stringify({ 
                     image: uploadedImageData.data, 
                     mimeType: uploadedImageData.mimeType 
-                  }),
-                });
-          
-                if (!describeResponse.ok) {
-                  const errorText = await describeResponse.text();
-                  throw new Error(`Image description failed: ${errorText}`);
-                }
-          
-                const responseData = await describeResponse.json();
-                englishText = responseData.englishDescription;
-              } catch (error) {
-                console.error('Error describing image:', error);
-                outputText.textContent = 'An error occurred while describing the image: ' + error.message;
-                return;
-              }
+                }),
+            });
+
+            if (!describeResponse.ok) {
+                const errorText = await describeResponse.text();
+                throw new Error(`Image description failed: ${errorText}`);
             }
-          
-            if (!englishText.trim()) {
-              outputText.textContent = 'Please enter text to translate or upload an image.';
-              return;
-            }
-          
-            outputText.innerHTML = `
-              <h3>Image Description:</h3>
-              <p>${englishText}</p>
-            `;
-            copyButton.disabled = false;
-            updateGlobeAndInfo(language);
-          
-            uploadedImageData = null; // Reset the uploaded image data
+
+            const responseData = await describeResponse.json();
+            lastImageDescription = responseData.englishDescription;
+            outputText.textContent = lastImageDescription;
+            uploadedImageData = null;
+            translateButton.textContent = 'Describe Image';
+        } catch (error) {
+            console.error('Error describing image:', error);
+            outputText.textContent = 'An error occurred while describing the image: ' + error.message;
+        }
+    } else {
+        if (!textToTranslate.trim()) {
+            outputText.textContent = 'Please enter text to translate or upload an image.';
             translateButton.disabled = false;
             translateButton.classList.remove('button-disabled');
-            translateButton.textContent = 'Translate Image';
-          });
+            return;
+        }
 
+        try {
+            const translateResponse = await fetch('/api/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: textToTranslate, targetLanguage: language }),
+            });
+
+            if (!translateResponse.ok) {
+                throw new Error(`Translation failed: ${translateResponse.statusText}`);
+            }
+
+            const translateData = await translateResponse.json();
+            outputText.textContent = translateData.result;
+            copyButton.disabled = false;
+            updateGlobeAndInfo(language);
+        } catch (error) {
+            console.error('Error during translation:', error);
+            outputText.textContent = 'An error occurred during translation: ' + error.message;
+        }
+    }
+
+    translateButton.disabled = false;
+    translateButton.classList.remove('button-disabled');
+});
     copyButton.disabled = true;
     updateGlobeAndInfo(targetLanguage.value);
       }})
