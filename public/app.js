@@ -328,7 +328,8 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
                   isImageMode = true;
                   inputText.style.display = 'none';
                   targetLanguage.style.display = 'none';
-                  translateButton.textContent = 'Translate Image';
+                  translateButton.textContent = 'Image Details';
+                  translateButton.disabled = true;
                   outputText.textContent = 'Image uploaded. Click Translate Image to process.';
                   lastImageDescription = '';
                 };
@@ -392,7 +393,11 @@ translateButton.addEventListener('click', async () => {
             translateButton.textContent = 'Describe Image';
         } catch (error) {
             console.error('Error describing image:', error);
-            outputText.textContent = 'An error occurred while describing the image: ' + error.message;
+            outputText.textContent = 'An error occurred while processing the image. Please try again.';
+        } finally {
+            translateButton.disabled = false;
+            translateButton.classList.remove('button-disabled');
+            translateButton.textContent = 'Translate';
         }
     } else {
         if (!textToTranslate.trim()) {

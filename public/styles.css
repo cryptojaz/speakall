@@ -245,9 +245,16 @@ footer a:hover {
   overflow-y: auto;
 }
 
-/* Modify the media query */
+
+
+
+
 @media (max-width: 768px) {
-  
+  body, html {
+      height: auto;
+      overflow-y: auto;
+  }
+
   #globeContainer, #countryInfo {
     width: 100%;
     height: auto;
@@ -260,27 +267,27 @@ footer a:hover {
 .category-button {
     margin: 5px;
 }
+  .page-container, .content-wrap, .app-container {
+      min-height: auto;
+  }
 
   .app-container {
     padding: 0.5rem;
   }
-  
   main {
-    grid-template-columns: 1fr;
-  }
-  
-  .visual-element {
-    height: auto;
+      display: block;
+      grid-template-columns: 1fr;
   }
 
-  body {
-    overflow-y: auto;
-}
-
-#questionModeTab {
+  #questionModeTab {
     left: 10px; /* Adjust this value as needed */
 }
+  .visual-element {
+      height: auto;
+  }
 }
+
+
 
 .content-wrap {
   flex: 1;
@@ -309,7 +316,7 @@ body {
 }
 
 .scale-wrapper {
-  transform: scale(0.9); /* Adjust this value to shrink or enlarge */
+  transform: scale(0.95); /* Adjust this value to shrink or enlarge */
 
   height: calc(100% / 1.0); /* Inverse of the scale value */
 

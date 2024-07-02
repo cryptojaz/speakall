@@ -20,18 +20,81 @@
                         <dt>What is SpeakAll?</dt>
                         <dd>SpeakAll is an omnilingual translator powered by Claude 3.5 Sonnet AI, capable of translating text into various languages, including modern, historic, alien, and fun languages.</dd>
 
+                        <dt>What is Guide Mode?</dt>
+                        <dd>Guide Mode is a step-by-step process that walks you through the translation process, similar to a typeform experience.</dd>
+                    
+                        <dt>How does the Translate Image mode work?</dt>
+                        <dd>Translate Image mode allows you to upload an image, which will be described and then translated into your chosen language.</dd>
+                    
+
+    <dt>What are the different language modes in SpeakAll?</dt>
+    <dd>
+        SpeakAll offers four main language modes:
+        <ul>
+            <li><strong>Modern Languages:</strong> Current widely-spoken languages from around the world.</li>
+            <li><strong>Classic Languages:</strong> Historical and ancient languages, some no longer in common use.</li>
+            <li><strong>Alien Languages:</strong> Fictional languages from popular science fiction and fantasy universes.</li>
+            <li><strong>Fun Languages:</strong> Playful and unconventional language styles, including internet slang and meme speak.</li>
+        </ul>
+    </dd>
+
+    <dt>Who is SpeakAll designed for?</dt>
+    <dd>SpeakAll is designed for a wide range of users, including:
+        <ul>
+            <li>Language enthusiasts who want to explore different languages and writing systems</li>
+            <li>Sci-fi and fantasy fans interested in alien or fictional languages</li>
+            <li>Students and educators looking for a fun way to engage with language learning</li>
+            <li>Casual users seeking entertainment through unique translations</li>
+            <li>Content creators looking for inspiration in various language styles</li>
+        </ul>
+    </dd>
+
+    <dt>How does SpeakAll address specific user needs?</dt>
+    <dd>SpeakAll addresses user needs by:
+        <ul>
+            <li>Providing quick and easy access to translations in a wide variety of languages, including rare and fictional ones</li>
+            <li>Offering a user-friendly interface for both text and image translation</li>
+            <li>Including a Guide Mode for step-by-step assistance in the translation process</li>
+            <li>Combining education and entertainment through its diverse language offerings</li>
+            <li>Enabling creative expression through unconventional language translations</li>
+        </ul>
+    </dd>
+
+    <dt>What makes SpeakAll unique compared to other translation tools?</dt>
+    <dd>SpeakAll stands out due to:
+        <ul>
+            <li>Its inclusion of fictional and "fun" languages alongside traditional ones</li>
+            <li>The ability to translate both text and images</li>
+            <li>An interactive globe visualization for exploring language origins</li>
+            <li>The use of advanced AI (Claude 3.5 Sonnet) for more nuanced translations</li>
+            <li>Its focus on both practical utility and entertainment value</li>
+        </ul>
+    </dd>
+
+    <dt>How does SpeakAll implement creative problem-solving?</dt>
+    <dd>SpeakAll demonstrates creative problem-solving through:
+        <ul>
+            <li>Leveraging AI to tackle translation challenges in fictional and unconventional languages</li>
+            <li>Combining visual elements (like the interactive globe) with textual translations for a more engaging experience</li>
+            <li>Offering image translation capabilities to bridge language barriers in visual content</li>
+            <li>Providing a Guide Mode to assist users who may be unfamiliar with translation tools</li>
+        </ul>
+    </dd>
+
+    <dt>Can SpeakAll read text from images?</dt>
+<dd>Yes, SpeakAll can read and translate text within images. However, results may vary depending on the clarity and complexity of the text in the image. Currently, SpeakAll supports common image file formats but does not process PDFs.</dd>
                         <dt>How accurate are the translations?</dt>
                         <dd>While we strive for high accuracy, please note that AI-generated translations may not always be perfect, especially for less common or fictional languages.</dd>
 
                         <dt>Can I use SpeakAll for professional translations?</dt>
                         <dd>SpeakAll is primarily designed for casual use and entertainment. For professional or official translations, we recommend using certified human translators.</dd>
 
-                        <dt>How does the image description feature work?</dt>
-                        <dd>Our image description feature uses Claude 3.5 Sonnet's vision capabilities to analyze uploaded images and provide descriptions in both English and your selected target language.</dd>
-
                         <dt>Is my data safe when using SpeakAll?</dt>
                         <dd>We take data privacy seriously. Your uploaded text and images are processed securely and are not stored beyond the duration of your session.</dd>
-                    </dl>
+                  
+                        <dt>Are there limitations for certain languages?</dt>
+                        <dd>Yes, some languages, particularly fictional ones, may have more limitations. Shorter prompts often work better for these languages.</dd>
+                     </dl>
                 </main>
             </div>
         </div>
@@ -39,5 +102,26 @@
             <p>Created by <a href="https://x.com/riskaversetech" target="_blank">Risk Averse Tech</a> | Powered by <a href="https://www.anthropic.com/news/claude-3-5-sonnet" target="_blank">Claude Sonnet 3.5</a></p>
         </footer>
     </div>
+
+<style>
+    dt {
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 1em;
+    }
+    dd {
+        display: none;
+        margin-left: 1em;
+    }
+</style>
+
+<script>
+    document.querySelectorAll('dt').forEach(dt => {
+        dt.addEventListener('click', () => {
+            const dd = dt.nextElementSibling;
+            dd.style.display = dd.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+</script>
 </body>
 </html>

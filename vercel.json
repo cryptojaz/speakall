@@ -4,7 +4,7 @@
     { 
       "src": "api/**/*.js", 
       "use": "@vercel/node",
-      "config": { "maxDuration": 90 }
+      "config": { "maxDuration": 120 }
     },
     { "src": "public/**/*", "use": "@vercel/static" }
   ],
