@@ -37,7 +37,7 @@ export default async function handler(req, res) {
               },
               {
                 type: "text",
-                text: "Describe this image in detail."
+                text: "Describe this image in detail. In the case where it is a famous meme template, point this fact out."
               }
             ]
           }

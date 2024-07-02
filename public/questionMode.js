@@ -126,20 +126,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const navigationButtons = document.getElementById('navigationButtons');
         navigationButtons.innerHTML = '';
     
-        const prevButton = document.createElement('button');
-        prevButton.classList.add('nav-button');
-        
-        if (currentQuestionIndex === 0) {
-            prevButton.textContent = 'Back to Home';
-            prevButton.addEventListener('click', () => {
-                window.location.href = 'https://www.speakallai.com/';
-            });
-        } else {
+        if (currentQuestionIndex > 0) {
+            const prevButton = document.createElement('button');
+            prevButton.classList.add('nav-button');
             prevButton.textContent = 'Previous';
             prevButton.addEventListener('click', prevQuestion);
+            navigationButtons.appendChild(prevButton);
         }
-        
-        navigationButtons.appendChild(prevButton);
     }
 
 
@@ -168,7 +161,6 @@ function displayImageUpload() {
     answerArea.appendChild(uploadButton);
     answerArea.appendChild(fileInput);
 }
-
 function displayUploadedImage(fileName) {
     answerArea.innerHTML = '';
     const container = document.createElement('div');
@@ -196,13 +188,12 @@ function displayUploadedImage(fileName) {
     const translateButton = document.createElement('button');
     translateButton.textContent = 'Translate Image';
     translateButton.style.width = '200px';
-    translateButton.addEventListener('click', () => translateImage());
+    translateButton.addEventListener('click', translateImage);
 
     container.appendChild(imageContainer);
     container.appendChild(translateButton);
     answerArea.appendChild(container);
 }
-
 
 async function translateImage() {
     const translateButton = document.querySelector('button');
@@ -284,6 +275,7 @@ function updateSelectionSummary() {
     // ... (keep the rest of the functions as they were)
 
     async function showResult() {
+        
         const translateButton = document.getElementById('translateButton');
         if (translateButton) {
             translateButton.disabled = true;

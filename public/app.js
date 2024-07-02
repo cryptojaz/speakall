@@ -340,102 +340,109 @@ fetch('https://unpkg.com/world-atlas/countries-50m.json')
 
 
           // Modify the category button event listeners
-categoryButtons.forEach(button => {
-    button.addEventListener('click', () => {
-        if (button.id !== 'translateImage') {
-            isImageMode = false;
-            translateButton.textContent = 'Translate';
-            inputText.style.display = 'block';
-            outputText.style.display = 'block';
-            outputText.textContent = ''; // Clear the output text
-            if (lastImageDescription) {
-                inputText.value = lastImageDescription;
-                lastImageDescription = '';
-            }
-        }
-        currentCategory = button.id;
-        highlightActiveButton(currentCategory);
-        updateLanguageOptions(currentCategory);
-    });
-});
-       // Modify the translate button event listener
-translateButton.addEventListener('click', async () => {
-    translateButton.disabled = true;
-    translateButton.classList.add('button-disabled');
-    translateButton.classList.add('button-processing');
-    
-    const language = targetLanguage.value;
-    let textToTranslate = inputText.value;
-
-    if (isImageMode) {
-        translateButton.textContent = 'Processing...Average 10 seconds';
-        try {
-            const describeResponse = await fetch('/api/describeImage', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ 
-                    image: uploadedImageData.data, 
-                    mimeType: uploadedImageData.mimeType 
-                }),
+          categoryButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (button.id !== 'translateImage') {
+                    isImageMode = false;
+                    translateButton.textContent = 'Translate';
+                    translateButton.style.display = 'block';
+                    translateButton.disabled = false;
+                    translateButton.classList.remove('button-disabled', 'button-processing');
+                    inputText.style.display = 'block';
+                    outputText.style.display = 'block';
+                    outputText.textContent = ''; // Clear the output text
+                    if (lastImageDescription) {
+                        inputText.value = lastImageDescription;
+                        lastImageDescription = '';
+                    }
+                    // Remove the image description label if it exists
+                    const imageDescriptionLabel = document.querySelector('div[style="font-weight: bold;"]');
+                    if (imageDescriptionLabel) {
+                        imageDescriptionLabel.remove();
+                    }
+                }
+                currentCategory = button.id;
+                highlightActiveButton(currentCategory);
+                updateLanguageOptions(currentCategory);
             });
+        });
 
-            if (!describeResponse.ok) {
-                const errorText = await describeResponse.text();
-                throw new Error(`Image description failed: ${errorText}`);
-            }
-
-            const responseData = await describeResponse.json();
-            lastImageDescription = responseData.englishDescription;
-            outputText.textContent = lastImageDescription;
-            copyButton.disabled = false;
-            uploadedImageData = null;
-            translateButton.textContent = 'Image Description';
+        translateButton.addEventListener('click', async () => {
             translateButton.disabled = true;
-        } catch (error) {
-            console.error('Error describing image:', error);
-            outputText.textContent = 'An error occurred while processing the image. Please try again.';
-        } finally {
-            translateButton.disabled = false;
-            translateButton.classList.remove('button-disabled');
-            translateButton.classList.remove('button-processing');
-            translateButton.textContent = 'Translate';
-        }
-    } else {
-        if (!textToTranslate.trim()) {
-            outputText.textContent = 'Please enter text to translate or upload an image.';
-            translateButton.disabled = false;
-            translateButton.classList.remove('button-disabled');
-            return;
-        }
-
-        try {
-            const translateResponse = await fetch('/api/translate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ text: textToTranslate, targetLanguage: language }),
-            });
-
-            if (!translateResponse.ok) {
-                throw new Error(`Translation failed: ${translateResponse.statusText}`);
+            translateButton.classList.add('button-disabled', 'button-processing');
+            
+            const language = targetLanguage.value;
+            let textToTranslate = inputText.value;
+        
+            if (isImageMode) {
+                translateButton.textContent = 'Processing...Average 10 seconds';
+                try {
+                    const describeResponse = await fetch('/api/describeImage', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            image: uploadedImageData.data, 
+                            mimeType: uploadedImageData.mimeType 
+                        }),
+                    });
+        
+                    if (!describeResponse.ok) {
+                        const errorText = await describeResponse.text();
+                        throw new Error(`Image description failed: ${errorText}`);
+                    }
+        
+                    const responseData = await describeResponse.json();
+                    lastImageDescription = responseData.englishDescription;
+                    outputText.textContent = lastImageDescription;
+                    copyButton.disabled = false;
+                    uploadedImageData = null;
+                    const imageDescriptionLabel = document.createElement('div');
+                    imageDescriptionLabel.textContent = 'Image Description:';
+                    imageDescriptionLabel.style.fontWeight = 'bold';
+                    outputText.parentNode.insertBefore(imageDescriptionLabel, outputText);
+                    translateButton.style.display = 'none';
+                } catch (error) {
+                    console.error('Error describing image:', error);
+                    outputText.textContent = 'An error occurred while processing the image. Please try again.';
+                }
+            } else {
+                if (!textToTranslate.trim()) {
+                    outputText.textContent = 'Please enter text to translate or upload an image.';
+                    translateButton.disabled = false;
+                    translateButton.classList.remove('button-disabled', 'button-processing');
+                    return;
+                }
+        
+                translateButton.textContent = 'Translating...';
+                try {
+                    const translateResponse = await fetch('/api/translate', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ text: textToTranslate, targetLanguage: language }),
+                    });
+        
+                    if (!translateResponse.ok) {
+                        throw new Error(`Translation failed: ${translateResponse.statusText}`);
+                    }
+        
+                    const translateData = await translateResponse.json();
+                    outputText.textContent = translateData.result;
+                    copyButton.disabled = false;
+                    updateGlobeAndInfo(language);
+                } catch (error) {
+                    console.error('Error during translation:', error);
+                    outputText.textContent = 'An error occurred during translation: ' + error.message;
+                }
             }
-
-            const translateData = await translateResponse.json();
-            outputText.textContent = translateData.result;
-            copyButton.disabled = false;
-            updateGlobeAndInfo(language);
-        } catch (error) {
-            console.error('Error during translation:', error);
-            outputText.textContent = 'An error occurred during translation: ' + error.message;
-        }
-    }
-
-    translateButton.disabled = false;
-    translateButton.classList.remove('button-disabled');
-});
+        
+            translateButton.disabled = false;
+            translateButton.classList.remove('button-disabled', 'button-processing');
+            translateButton.textContent = isImageMode ? 'Translate Image' : 'Translate';
+        });
     copyButton.disabled = true;
     updateGlobeAndInfo(targetLanguage.value);
       }})
