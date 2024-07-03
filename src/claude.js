@@ -5,7 +5,6 @@ let anthropic;
 function initializeAnthropicClient() {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    console.error('ANTHROPIC_API_KEY is not set in environment variables');
     throw new Error('ANTHROPIC_API_KEY is not set in environment variables');
   }
   anthropic = new Anthropic({ apiKey });
@@ -32,15 +31,14 @@ export async function translateText(text, targetLanguage) {
     const translatedText = response.content
       .filter(block => block.type === 'text')
       .map(block => block.text)
-      .join(' ');
+      .join(' ').trim();
     
-    if (!translatedText.trim()) {
+    if (!translatedText) {
       throw new Error("Received empty translation response.");
     }
     
     return translatedText;
   } catch (error) {
-    console.error('Error calling Claude API:', error);
     throw new Error(`Translation API error: ${error.message}`);
   }
 }

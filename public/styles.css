@@ -5,6 +5,10 @@
   --secondary-color: #ff00ff;
   --background-color: #0a0a20;
   --text-color: #ffffff;
+  --button-gradient: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  --border-radius: 10px;
+  --padding-standard: 0.5rem;
+  --transition-standard: all 0.3s ease;
 }
 
 * {
@@ -32,9 +36,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-
 }
-
 
 .app-container {
   flex: 1;
@@ -74,11 +76,11 @@ main {
   gap: 0.5rem;
 }
 
-textarea, button {
+textarea, button, select {
   width: 100%;
-  padding: 0.5rem;
+  padding: var(--padding-standard);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--border-radius);
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-color);
   font-size: 1rem;
@@ -86,7 +88,6 @@ textarea, button {
 
 select {
   background-color: var(--background-color);
-  color: var(--text-color);
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
@@ -96,25 +97,16 @@ select {
   background-position: right 5px top 50%;
 }
 
-select option {
-  background-color: var(--background-color);
-  color: var(--text-color);
-}
-
-select::-ms-expand {
-  display: none;
-}
-
 textarea {
   height: 120px;
   resize: none;
 }
 
 button {
-  background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+  background: var(--button-gradient);
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-standard);
 }
 
 button:hover {
@@ -125,7 +117,7 @@ button:hover {
 .output-display {
   min-height: 120px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: var(--border-radius);
   padding: 1rem;
 }
 
@@ -149,18 +141,13 @@ button:hover {
 }
 
 @keyframes pulse {
-  0% {
-    box-shadow: 0 0 20px var(--primary-color);
-  }
-  100% {
-    box-shadow: 0 0 40px var(--secondary-color);
-  }
+  0% { box-shadow: 0 0 20px var(--primary-color); }
+  100% { box-shadow: 0 0 40px var(--secondary-color); }
 }
 
 #countryInfo {
   margin-top: 20px;
   text-align: center;
-  color: var(--text-color);
 }
 
 .category-selector {
@@ -172,16 +159,11 @@ button:hover {
 .category-button {
   padding: 10px 20px;
   margin: 0 10px;
-  border: none;
   background-color: #333;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
 }
 
 .category-button.active {
   background-color: var(--primary-color);
-  color: #fff;
   box-shadow: 0 0 10px var(--primary-color);
   transform: scale(1.2);
 }
@@ -191,18 +173,13 @@ button:hover {
   overflow-y: auto;
 }
 
-#copyButton {
+#copyButton, #twitterShareButton {
   padding: 0.5rem 1rem;
   font-size: 0.8rem;
 }
 
 #twitterShareButton {
-  padding: 0.5rem 1rem;
   background: #1DA1F2;
-  color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
 }
 
 #questionModeTab {
@@ -219,7 +196,6 @@ button:hover {
   writing-mode: vertical-rl;
   text-orientation: mixed;
 }
-
 
 footer {
   width: 100%;
@@ -239,96 +215,22 @@ footer a:hover {
   text-decoration: underline;
 }
 
-/* Add this new style */
-.visual-element {
-  height: 100%;
-  overflow-y: auto;
-}
-
-
-
-
-
-@media (max-width: 768px) {
-  body, html {
-      height: auto;
-      overflow-y: auto;
-  }
-
-  #globeContainer, #countryInfo {
-    width: 100%;
-    height: auto;
-}
-
-.category-selector {
-    flex-wrap: wrap;
-}
-
-.category-button {
-    margin: 5px;
-}
-  .page-container, .content-wrap, .app-container {
-      min-height: auto;
-  }
-
-  .app-container {
-    padding: 0.5rem;
-  }
-  main {
-      display: block;
-      grid-template-columns: 1fr;
-  }
-
-  #questionModeTab {
-    left: 10px; /* Adjust this value as needed */
-}
-  .visual-element {
-      height: auto;
-  }
-}
-
-
-
 .content-wrap {
   flex: 1;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 90px);
-  overflow-y: auto; /* Add this line */
-}
-
-.app-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-main {
-  flex: 1;
   overflow-y: auto;
 }
 
-
-
-
-body {
-  overflow-y: hidden;
-}
-
 .scale-wrapper {
-  transform: scale(0.95); /* Adjust this value to shrink or enlarge */
-
-  height: calc(100% / 1.0); /* Inverse of the scale value */
-
+  transform: scale(0.95);
+  height: calc(100% / 0.95);
   padding: 30px;
 }
 
-#translateButton {
-  margin-left: 10px;
-}
 #translateImage {
   background: linear-gradient(45deg, #4c9baf, #05ade5);
-  color: white;
 }
 
 #translateImage:hover, #translateImage.active {
@@ -340,6 +242,74 @@ body {
 .button-disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.button-processing {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.translation-container,
+.visual-element,
+header {
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+}
+
+header { animation-delay: 0.2s; }
+.translation-container { animation-delay: 0.4s; }
+.visual-element { animation-delay: 0.6s; }
+
+@media (max-width: 768px) {
+  body, html {
+    height: auto;
+    overflow-y: auto;
+  }
+
+  #globeContainer, #countryInfo {
+    width: 100%;
+    height: auto;
+  }
+
+  .category-selector {
+    flex-wrap: wrap;
+  }
+
+  .category-button {
+    margin: 5px;
+  }
+
+  .page-container, .content-wrap, .app-container {
+    min-height: auto;
+  }
+
+  .app-container {
+    padding: 0.5rem;
+  }
+
+  main {
+    display: block;
+    grid-template-columns: 1fr;
+  }
+
+  #questionModeTab {
+    left: 10px;
+  }
+
+  .visual-element {
+    height: auto;
+  }
+
+  .scale-wrapper {
+    transform: none;
+    height: auto;
+    padding: 15px;
+  }
 }
 
 @media screen and (max-height: 800px) {
@@ -361,39 +331,4 @@ body {
     background-color: var(--background-color);
     padding: 10px 0;
   }
-}
-
-.button-processing {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.translation-container,
-.visual-element,
-header {
-  opacity: 0;
-  animation: fadeIn 1s ease-in forwards;
-}
-
-header {
-  animation-delay: 0.2s;
-}
-
-.translation-container {
-  animation-delay: 0.4s;
-}
-
-.visual-element {
-  animation-delay: 0.6s;
-}
-/*#translateButton, #copyButton, #twitterShareButton {
-  width: auto;
-  min-width: 120px;
-  max-width: 200px;
-  margin: 0.5rem auto;
-  display: block;
 }

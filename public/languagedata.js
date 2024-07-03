@@ -49,7 +49,11 @@
     };
     
     export const funLanguageInfo = {
-        'Pig Latin': { 
+        'Emoji Language': { 
+            coordinates: [0, 0], 
+            fact: 'Emoji Language uses digital icons to convey emotions, concepts, or messages. Initially developed for Japanese mobile phones in the 1990s, it has become a global means of communication in digital texts and social media.'
+        },
+         'Pig Latin': { 
             coordinates: [0, 0], 
             fact: 'Pig Latin is a language game where words in English are altered according to a simple set of rules.'
         },
@@ -65,16 +69,6 @@
             coordinates: [0, 0], 
             fact: 'Leet Speak, or 1337 Speak, is an alternative alphabet for the English language that uses various combinations of ASCII characters to replace Latinate letters. It is used primarily on the Internet, known for its use in computer hacker culture and by gamers.'
         },
-        'Emoji Language': { 
-            coordinates: [0, 0], 
-            fact: 'Emoji Language uses digital icons to convey emotions, concepts, or messages. Initially developed for Japanese mobile phones in the 1990s, it has become a global means of communication in digital texts and social media.'
-        },
-        'Joke Language S.A.O.G.': {
-            coordinates: [0, 0],
-            fact: 'Joke Language takes any phrase and humorously transforms it, employing puns, wordplay, or playful misinterpretation to add a comic twist.'
-        },
-        
-    
         'Lojban': { 
             coordinates: [0, 0], 
             fact: 'Lojban is a logical language created by the Logical Language Group in 1987, designed to be unambiguous in its syntax and grammar.'
@@ -146,11 +140,6 @@
             coordinates: [0, 0],
             fact: 'A classical language of the Game of Thrones world, used in ancient poetry and dragon commands.'
         },
-        'Shyriiwook': {
-            origin: 'Star Wars Universe',
-            coordinates: [0, 0],
-            fact: 'The language of Wookiees, characterized by growls and roars, suited to their vocal apparatus.'
-        }
     };
     
     
