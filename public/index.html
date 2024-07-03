@@ -24,8 +24,9 @@
             <p>Your Omnilingual Superpower</p>
         </header>
         <main>
-        
+            
             <div class="translation-container">
+               
                 <div class="category-selector">
                     <button id="modernLanguages" class="category-button active">Modern Languages</button>
                     <button id="historicLanguages" class="category-button">Historic Languages</button>
@@ -34,7 +35,7 @@
                     <button id="translateImage" class="category-button">Translate Image</button>
                     <input type="file" id="imageUpload" accept="image/*" style="display: none;">
                 </div>
-            
+                
                 <textarea id="inputText" placeholder="Enter text to translate..."></textarea>
                 <select id="targetLanguage"></select>
                 <button id="translateButton">Translate</button>
@@ -51,7 +52,7 @@
                 <div id="globeContainer"></div>
                 <div id="countryInfo"></div>
             </div>
-       
+        
         </main>
     </div>
 </div> </div>
@@ -61,7 +62,7 @@
  </p>
 </div>
 <div id="questionModeTab">
-<button id="openQuestionMode">Guide Mode</button>
+    <button id="openQuestionMode" onclick="window.open('questionMode.html', '_blank')">Guide Mode</button>
 </div>
 <script>
 window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };

@@ -149,3 +149,12 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+#progressBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 5px;
+    background-color: #00ffff;
+    transition: width 0.3s ease;
+}

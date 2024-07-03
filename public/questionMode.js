@@ -3,7 +3,7 @@ import { languageInfo, funLanguageInfo, historicLanguageInfo, alienLanguageInfo 
 document.addEventListener('DOMContentLoaded', function() {
     const questions = [
         {
-            title: "Select input type",
+            title: "Select input type you will provide",
             type: "inputType",
             options: ["Text", "Image"]
         },
@@ -36,11 +36,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const copyButton = document.getElementById('copyButton');
     const tweetButton = document.getElementById('twitterShareButton');
 
-    function updateQuestion() {
-        const question = questions[currentQuestionIndex];
-        questionTitle.textContent = answers.inputType === 'Image' ? 'Select an image to translate' : question.title;
-        answerArea.innerHTML = '';
+
+    function updateProgressBar() {
+        const totalSteps = answers.inputType === 'Image' ? 3 : questions.length;
+        let currentStep = answers.inputType === 'Image' ? 1 : currentQuestionIndex + 1;
     
+        if (answers.inputType === 'Image') {
+            if (uploadedImage) {
+                currentStep = 2;
+            }
+            if (translationResult.textContent) {
+                currentStep = 3;
+            }
+        }
+    
+        const progress = (currentStep / totalSteps) * 100;
+        progressBar.style.width = `${progress}%`;
+    }
+
+    function updateQuestion() {
+        console.log('Updating question. Current index:', currentQuestionIndex);
+    
+        const question = questions[currentQuestionIndex];
+        
+        if (answers.inputType === 'Image') {
+            questionTitle.innerHTML = 'Select an image to translate';
+        } else {
+            let stepNumber = currentQuestionIndex + 1;
+            questionTitle.innerHTML = `Step ${stepNumber}<br>${question.title}`;
+        }
+    
+        answerArea.innerHTML = '';
+        
         updateSelectionSummary();
     
         switch (question.type) {
@@ -76,6 +103,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
         updateProgressBar();
         updateNavigationButtons();
+        console.log('Current question index:', currentQuestionIndex);
     }
 
     function selectOption(option) {
@@ -101,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         updateQuestion();
+        updateProgressBar();
     }
 
     function updateLanguageOptions(category) {
@@ -126,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const navigationButtons = document.getElementById('navigationButtons');
         navigationButtons.innerHTML = '';
     
-        if (currentQuestionIndex > 0) {
+        if (currentQuestionIndex > 0 || (answers.inputType === 'Image' && uploadedImage)) {
             const prevButton = document.createElement('button');
             prevButton.classList.add('nav-button');
             prevButton.textContent = 'Previous';
@@ -134,7 +163,6 @@ document.addEventListener('DOMContentLoaded', function() {
             navigationButtons.appendChild(prevButton);
         }
     }
-
 
 function displayImageUpload() {
     const fileInput = document.createElement('input');
@@ -153,6 +181,7 @@ function displayImageUpload() {
             reader.onload = (e) => {
                 uploadedImage = e.target.result;
                 displayUploadedImage(file.name);
+              
             };
             reader.readAsDataURL(file);
         }
@@ -193,26 +222,25 @@ function displayUploadedImage(fileName) {
     container.appendChild(imageContainer);
     container.appendChild(translateButton);
     answerArea.appendChild(container);
+    updateProgressBar(); // Add this line
 }
-
 async function translateImage() {
     const translateButton = document.querySelector('button');
     translateButton.disabled = true;
     translateButton.classList.add('button-processing');
-    if (!answers.language) {
-        alert('Please select a target language first.');
-        return;
-    }
 
     try {
+        const imageData = uploadedImage.split(',')[1];
+        const mimeType = uploadedImage.split(',')[0].split(':')[1].split(';')[0];
+
         const response = await fetch('/api/describeImage', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                image: uploadedImage.split(',')[1],
-                mimeType: uploadedImage.split(',')[0].split(':')[1].split(';')[0]
+                image: imageData,
+                mimeType: mimeType
             }),
         });
 
@@ -223,10 +251,34 @@ async function translateImage() {
 
         const data = await response.json();
         answers.text = data.englishDescription;
+
+        // Only translate if the target language is not English
+        if (answers.language.toLowerCase() !== 'english') {
+            const translateResponse = await fetch('/api/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    text: answers.text,
+                    targetLanguage: answers.language
+                }),
+            });
+
+            if (!translateResponse.ok) {
+                throw new Error('Translation failed');
+            }
+
+            const translateData = await translateResponse.json();
+            answers.translatedText = translateData.result;
+        } else {
+            answers.translatedText = answers.text;
+        }
+
         showResult();
     } catch (error) {
-        console.error('Error describing image:', error);
-        alert('An error occurred while describing the image: ' + error.message);
+        console.error('Error processing image:', error);
+        alert('An error occurred while processing the image. Please try again later.');
     } finally {
         translateButton.disabled = false;
         translateButton.classList.remove('button-processing');
@@ -249,72 +301,75 @@ function updateSelectionSummary() {
         }
     }
 }
-
-
-    function nextQuestion() {
-        if (currentQuestionIndex < questions.length - 1) {
-            currentQuestionIndex++;
-            updateQuestion();
-        } else {
-            showResult();
-        }
-    }
     
-    function prevQuestion() {
-        if (currentQuestionIndex > 0) {
-            if (answers.inputType === 'Image' && currentQuestionIndex === questions.length - 1) {
-                currentQuestionIndex = 0;  // Go back to input type selection
-                answers = {};  // Reset answers
-            } else {
-                currentQuestionIndex--;
-            }
-            updateQuestion();
-        }
-    }
+function resetImageSelection() {
+    uploadedImage = null;
+    answers.text = null;
+}
 
+function prevQuestion() {
+    if (currentQuestionIndex > 0) {
+        if (answers.inputType === 'Image' && currentQuestionIndex === questions.length - 1) {
+            currentQuestionIndex = 0;  // Go back to input type selection
+            answers = {};  // Reset answers
+            resetImageSelection();
+        } else {
+            currentQuestionIndex--;
+        }
+        updateQuestion();
+    }
+}
     // ... (keep the rest of the functions as they were)
 
     async function showResult() {
-        
-        const translateButton = document.getElementById('translateButton');
+        const translateButton = document.querySelector('button');
         if (translateButton) {
             translateButton.disabled = true;
             translateButton.classList.add('button-processing');
         }
-
+    
         try {
-            const response = await fetch('/api/translate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    text: answers.text,
-                    targetLanguage: answers.language
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Translation failed');
+            let result;
+            if (answers.inputType === 'Image') {
+                result = answers.translatedText;
+            } else {
+                const response = await fetch('/api/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        text: answers.text,
+                        targetLanguage: answers.language
+                    }),
+                });
+    
+                if (!response.ok) {
+                    throw new Error('Translation failed');
+                }
+    
+                const data = await response.json();
+                result = data.result;
             }
-
-            const data = await response.json();
-            translationResult.textContent = data.result;
+    
+            translationResult.textContent = result;
+            updateProgressBar();
             resultArea.style.display = 'block';
             document.getElementById('questionContent').style.display = 'none';
             document.getElementById('navigationButtons').style.display = 'none';
-
+    
+            if (uploadedImage && answers.inputType === 'Image') {
+                const imageContainer = document.createElement('div');
+                imageContainer.innerHTML = `<img src="${uploadedImage}" alt="Uploaded Image" style="max-width: 100%; max-height: 300px;">`;
+                resultArea.insertBefore(imageContainer, resultArea.firstChild);
+            }
+    
             const completedMessage = document.createElement('p');
             completedMessage.textContent = 'Translation completed!';
             completedMessage.style.color = '#4CAF50';
             completedMessage.style.fontWeight = 'bold';
             document.getElementById('selectionSummary').appendChild(completedMessage);
-
-            if (uploadedImage) {
-                const imageContainer = document.createElement('div');
-                imageContainer.innerHTML = `<img src="${uploadedImage}" alt="Uploaded Image" style="max-width: 100%; max-height: 300px;">`;
-                resultArea.insertBefore(imageContainer, resultArea.firstChild);
-            }
+    
         } catch (error) {
             console.error('Error during translation:', error);
             translationResult.textContent = 'An error occurred during translation.';
@@ -359,6 +414,10 @@ resultArea.appendChild(refreshLink);
     prevButton.addEventListener('click', prevQuestion);
    
 
-    // Initialize the question mode
-    updateQuestion();
+// Initialize the question mode
+// Initialize the question mode
+currentQuestionIndex = 0;
+answers = {};
+updateQuestion();
+console.log('Guide mode initialized. Starting index:', currentQuestionIndex);
 });
