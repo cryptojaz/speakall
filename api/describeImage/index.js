@@ -37,7 +37,7 @@ export default async function handler(req, res) {
               },
               {
                 type: "text",
-                text: "Describe this image in detail. In the case where it is a famous meme template, point this fact out."
+                text: "Describe this image in detail. If it appears to be a well-known meme or template, mention that in your description. Focus on the main elements, colors, and any text or notable features in the image."
               }
             ]
           }
