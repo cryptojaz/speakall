@@ -224,14 +224,45 @@ function displayUploadedImage(fileName) {
     answerArea.appendChild(container);
     updateProgressBar(); // Add this line
 }
+
+function resizeImage(img, maxWidth = 800, maxHeight = 600) {
+    let width = img.width;
+    let height = img.height;
+
+    if (width > height) {
+        if (width > maxWidth) {
+            height *= maxWidth / width;
+            width = maxWidth;
+        }
+    } else {
+        if (height > maxHeight) {
+            width *= maxHeight / height;
+            height = maxHeight;
+        }
+    }
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0, width, height);
+    return canvas.toDataURL('image/jpeg', 0.7);
+}
+
 async function translateImage() {
     const translateButton = document.querySelector('button');
     translateButton.disabled = true;
     translateButton.classList.add('button-processing');
+    translateButton.textContent = 'Processing...Average 10 seconds';
 
     try {
-        const imageData = uploadedImage.split(',')[1];
-        const mimeType = uploadedImage.split(',')[0].split(':')[1].split(';')[0];
+        const img = new Image();
+        img.src = uploadedImage;
+        await new Promise((resolve) => { img.onload = resolve; });
+        const resizedImage = resizeImage(img);
+        
+        const imageData = resizedImage.split(',')[1];
+        const mimeType = resizedImage.split(',')[0].split(':')[1].split(';')[0];
 
         const response = await fetch('/api/describeImage', {
             method: 'POST',
@@ -282,6 +313,7 @@ async function translateImage() {
     } finally {
         translateButton.disabled = false;
         translateButton.classList.remove('button-processing');
+        translateButton.textContent = 'Translate Image';
     }
 }
 
