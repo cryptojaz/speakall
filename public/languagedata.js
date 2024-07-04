@@ -2,6 +2,7 @@
     export const languageInfo = {
         'Afrikaans': { countries: ['South Africa'], coordinates: [22.9375, -30.5595], fact: 'Afrikaans is a daughter language of Dutch and is spoken in South Africa and Namibia.' },
         'Albanian': { countries: ['Albania'], coordinates: [20.1683, 41.1533], fact: 'Albanian has its own distinct branch in the Indo-European language family tree.' },
+        'American Sign Language': { countries: ['United States', 'Canada'], coordinates: [-98.5795, 39.8283],  fact: 'ASL is a complete, natural language that uses signs made by moving the hands combined with facial expressions and body postures.' },
         'Arabic': { countries: ['Egypt'], coordinates: [30.8025, 26.8206], fact: 'Arabic is the liturgical language of Islam and is spoken by over 400 million people.' },
         'Armenian': { countries: ['Armenia'], coordinates: [45.0382, 40.0691], fact: 'Armenian has its own unique alphabet, created in 405 AD by Mesrop Mashtots.' },
         'Basque': { countries: ['Spain'], coordinates: [-2.6189, 42.9868], fact: 'Basque is a language isolate, not related to any other known language.' },
@@ -41,12 +42,18 @@
         'Slovak': { countries: ['Slovakia'], coordinates: [19.6990, 48.6690], fact: 'Slovak is closely related to Czech and uses the Latin alphabet with diacritical marks.' },
         'Slovenian': { countries: ['Slovenia'], coordinates: [14.9955, 46.1512], fact: 'Slovenian is the only Slavic language that has preserved the dual grammatical number from Proto-Slavic.' },
         'Spanish': { countries: ['Spain'], coordinates: [-3.7492, 40.4637], fact: 'Spanish is the world\'s second-most spoken native language and official in 21 countries.' },
+        'Swahili': {   countries: ['Tanzania', 'Kenya'],  coordinates: [34.8888, -6.3690], fact: 'Swahili is a Bantu language that serves as a lingua franca for much of East Africa.' },
         'Swedish': { countries: ['Sweden'], coordinates: [18.6435, 60.1282], fact: 'Swedish is a North Germanic language and is closely related to Norwegian and Danish.' },
         'Thai': { countries: ['Thailand'], coordinates: [100.9925, 15.8700], fact: 'Thai is a tonal language with five tones and its own unique script.' },
         'Turkish': { countries: ['Turkey'], coordinates: [35.2433, 38.9637], fact: 'Turkish uses the Latin alphabet and is known for its vowel harmony and agglutinative structure.' },
         'Ukrainian': { countries: ['Ukraine'], coordinates: [31.1656, 48.3794], fact: 'Ukrainian uses the Cyrillic alphabet and is the second-most spoken Slavic language after Russian.' },
+        'Urdu': { countries: ['Pakistan'],  coordinates: [69.3451, 30.3753], fact: 'Urdu, the national language of Pakistan, shares many similarities with Hindi but is written in a Persian-Arabic script.'},
         'Vietnamese': { countries: ['Vietnam'], coordinates: [108.2772, 14.0583], fact: 'Vietnamese is a tonal language with six tones and uses the Latin alphabet with additional diacritical marks.' },
-    };
+        'Yiddish': { 
+            countries: ['Various'], 
+            coordinates: [23.7275, 52.0567], // Approximate center of historical Yiddish-speaking areas
+            fact: 'Yiddish is a Germanic language historically spoken by Ashkenazi Jews, blending German dialects with Hebrew, Aramaic, and Slavic languages.'
+        }, };
     
     export const funLanguageInfo = {
         'Emoji Language': { 
@@ -60,6 +67,23 @@
         'Newspeak': {
             coordinates: [0, 0],
             fact: 'Newspeak is a controlled language created by the authoritarian regime in George Orwell\'s Nineteen Eighty-Four to limit freedom of thought and prevent rebellion by eliminating all words related to it.'
+        },
+        'Pirate Speak': {
+            coordinates: [-62.8333, 17.8333], // Approximate coordinates of the Caribbean Sea
+            fact: 'Pirate speak, while not a real historical language, is a popular form of speech in pop culture, often featuring phrases like "Arrr!" and "Shiver me timbers!"'
+        },
+        'American Slang': {
+            coordinates: [-98.5795, 39.8283], // Approximate center of the USA
+            fact: 'American slang varies widely by region and demographic, but has given the world terms like "cool," "awesome," and "dude."'
+        },
+        'British Slang': {
+            coordinates: [-3.4359, 55.3781], // Coordinates of the UK
+            fact: 'British slang includes colorful terms like "blimey," "gobsmacked," and "knackered," and can vary significantly between different regions of the UK.'
+        },
+        'Cockney': {
+            countries: ['United Kingdom'],
+            coordinates: [-0.1276, 51.5074],
+            fact: 'Cockney is a dialect traditionally spoken by working-class Londoners, known for its rhyming slang.'
         },
         'Esperanto': { 
             coordinates: [15.9819, 45.8150], // Coordinates of Zagreb, birthplace of Esperanto
@@ -92,7 +116,8 @@
         'Solresol': { 
             coordinates: [2.3522, 48.8566], // Coordinates of Paris, where Solresol was created
             fact: 'Solresol, created in 1827 by François Sudre, is based on musical notes and can be spoken, sung, or even signaled with colored flags.'
-        }
+        },
+     
     };
 
     
@@ -116,8 +141,7 @@
         'Old Church Slavonic': { region: 'Eastern Europe', coordinates: [20.0000, 50.0000], fact: 'Old Church Slavonic was used in the Orthodox Slavic churches.' },
         'Tocharian': { region: 'Tarim Basin', coordinates: [88.0000, 38.0000], fact: 'Tocharian was an Indo-European language spoken in what is now western China.' },
         'Old Irish': { region: 'Ireland', coordinates: [-8.0000, 53.0000], fact: 'Old Irish is known from many texts including legal and religious writings.' },
-        'Volapük': { region: 'Europe', coordinates: [10.0000, 50.0000], fact: 'Volapük was one of the first constructed international auxiliary languages.' }
-    };
+  };
     
     export const alienLanguageInfo = {
         'Klingon': {
@@ -140,6 +164,17 @@
             coordinates: [0, 0],
             fact: 'A classical language of the Game of Thrones world, used in ancient poetry and dragon commands.'
         },
+        'Elvish': {
+            origin: 'Middle-earth, The Lord of the Rings',
+            coordinates: [0, 0],
+            fact: 'Elvish, created by J.R.R. Tolkien, is a family of languages spoken by Elves in Middle-earth, with Quenya and Sindarin being the most developed.'
+        },
+        'Vulcan': {
+            origin: 'Star Trek Universe',
+            coordinates: [0, 0],
+            fact: 'Vulcan is the language of the Vulcan species in Star Trek, known for its logical structure reflecting Vulcan philosophy.'
+        },
+   
     };
     
     
